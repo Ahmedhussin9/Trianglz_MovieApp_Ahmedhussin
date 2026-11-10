@@ -5,8 +5,8 @@
 | | |
 |---|---|
 | **Current phase** | Phase 1: Movies list (Phase 0 complete) |
-| **Last completed task** | T0.10: Test infrastructure (T0.7 merged into T1.3) |
-| **Next task** | T1.1: Domain, movies list |
+| **Last completed task** | T1.1: Domain, movies list |
+| **Next task** | T1.2: Data, remote (discover endpoint) |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -266,7 +266,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 
 ### Phase 1: Movies list, built end to end first
 
-- [ ] **T1.1 Domain: movies list.** Add the `Movie` model, the `MoviesRepository` interface (`fun movies(): Flow<PagingData<Movie>>`) and `GetMoviesUseCase`. *Test:* the use-case unit test with a fake repository. **Covers:** R1, R16, R27
+- [x] **T1.1 Domain: movies list.** Add the `Movie` model, the `MoviesRepository` interface (`fun movies(): Flow<PagingData<Movie>>`) and `GetMoviesUseCase`. *Test:* the use-case unit test with a fake repository. **Covers:** R1, R16, R27
 - [ ] **T1.2 Data, remote: discover endpoint.** Add `MoviesApi.discoverMovies(page)` (`/discover/movie?sort_by=popularity.desc`), the DTOs, `MoviesRemoteDataSource`, and DTO → entity → domain mappers **with validation**:
   - drop items with no ID or a blank title;
   - a null poster becomes a placeholder;

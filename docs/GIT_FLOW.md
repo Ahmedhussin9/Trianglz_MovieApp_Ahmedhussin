@@ -39,11 +39,13 @@ git push -u origin feature/phase-1-movies-list
 # 4. Merge the PR with "Create a merge commit" (not squash or rebase), so each phase
 #    stays visible as one unit and its task commits are kept.
 
-# 5. Update the local develop and delete the finished branch
+# 5. Update the local develop and delete the finished *local* branch
 git switch develop
 git pull origin develop
 git branch -d feature/phase-1-movies-list
 ```
+
+**Remote feature branches are kept** after merging (do not click "Delete branch" on the PR). Once merged, a branch holds no unique work, since every commit is in `develop` through the merge commit. Keeping it on GitHub leaves a visible record of one branch per phase next to its PR, which makes the Git Flow history easy for reviewers to follow (R31). Local copies are deleted so nobody commits to a branch that was already merged.
 
 ### Definition of done (for each task commit)
 - [ ] `gradlew.bat assembleDebug` passes
