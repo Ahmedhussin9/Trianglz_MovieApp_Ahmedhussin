@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">تطبيق الأفلام</string>
+
+    <!-- Common -->
+    <string name="loading">جارٍ التحميل…</string>
+    <string name="action_retry">إعادة المحاولة</string>
+    <string name="action_back">رجوع</string>
+
+    <!-- Navigation-shell stubs (T0.9); removed when the real screens land in T1.5 / T2.4 -->
+    <string name="placeholder_movies_body">ستتوفر قائمة الأفلام في المرحلة الأولى.</string>
+    <string name="placeholder_open_sample_movie">افتح فيلمًا تجريبيًا</string>
+    <string name="placeholder_details_title">الفيلم رقم %1$d</string>
+    <string name="rating_content_description">التقييم %1$s من 10</string>
+
+    <!-- Errors (one per DomainError) -->
+    <string name="error_no_internet">لا يوجد اتصال بالإنترنت. تحقّق من اتصالك وحاول مرة أخرى.</string>
+    <string name="error_timeout">استغرق الخادم وقتًا طويلًا للرد. يُرجى المحاولة مرة أخرى.</string>
+    <string name="error_unauthorized">تعذّر الاتصال بخدمة الأفلام. تحقّق من رمز الوصول الخاص بـ TMDb.</string>
+    <string name="error_not_found">لم نتمكّن من العثور على ما تبحث عنه.</string>
+    <string name="error_rate_limited">طلبات كثيرة جدًا. يُرجى الانتظار قليلًا ثم المحاولة مرة أخرى.</string>
+    <string name="error_server">تواجه خدمة الأفلام مشكلة حاليًا. يُرجى المحاولة لاحقًا.</string>
+    <string name="error_unknown">حدث خطأ ما. يُرجى المحاولة مرة أخرى.</string>
+</resources>
