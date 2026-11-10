@@ -5,8 +5,8 @@
 | | |
 |---|---|
 | **Current phase** | Phase 1: Movies list (Phase 0 complete) |
-| **Last completed task** | T0.11: Logging (added during Phase 1, after T1.2) |
-| **Next task** | T1.3: Data, cache (Room + RemoteMediator) |
+| **Last completed task** | T1.3: Data, cache (Room + RemoteMediator, incl. T0.7) |
+| **Next task** | T1.4: Presentation, MoviesViewModel |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -276,7 +276,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
   - the rating is limited to 0–10.
 
   *Test:* MockWebServer and mapper unit tests, including malformed data. **Covers:** R1, R2, R22, R23, R28
-- [ ] **T1.3 Data, cache: RemoteMediator.** Includes the merged T0.7: `MovieDatabase`, `DatabaseModule` and an exported schema. Add `MovieEntity` (with a position or order column), `RemoteKeyEntity`, the DAOs, `MoviesRemoteMediator` (`initialize()` → `LAUNCH_INITIAL_REFRESH`, REFRESH replaces the pages in one transaction, APPEND loads the next page and stops at `min(total_pages, 500)` because TMDb reports more pages than it serves (seen in T0.5), errors are wrapped with `toDomainError()`), and `MoviesRepositoryImpl` with a `Pager` backed by Room's `PagingSource`. *Test:*
+- [x] **T1.3 Data, cache: RemoteMediator.** Includes the merged T0.7: `MovieDatabase`, `DatabaseModule` and an exported schema. Add `MovieEntity` (with a position or order column), `RemoteKeyEntity`, the DAOs, `MoviesRemoteMediator` (`initialize()` → `LAUNCH_INITIAL_REFRESH`, REFRESH replaces the pages in one transaction, APPEND loads the next page and stops at `min(total_pages, 500)` because TMDb reports more pages than it serves (seen in T0.5), errors are wrapped with `toDomainError()`), and `MoviesRepositoryImpl` with a `Pager` backed by Room's `PagingSource`. *Test:*
   - `RemoteMediator` unit tests with paging-testing for refresh success and failure, append, and end of pagination;
   - instrumented DAO tests.
 
