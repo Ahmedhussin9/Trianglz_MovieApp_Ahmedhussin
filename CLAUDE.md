@@ -41,6 +41,7 @@ The full requirements live in `docs/requirements.md` (extracted from the task PD
 - Add previews for main composables (light, dark, RTL).
 - The API key is stored in `local.properties` and read through BuildConfig. It is never committed. The README explains how to set it.
 - Clear names, no dead or commented-out code. Comments explain "why", not "what".
+- Logging: use Timber, never `android.util.Log` or `println`. `d` for flow events (a load starts or finishes, an action is received, cache hit or miss), `w` with the throwable for handled failures, `e` for unexpected states. Never log tokens or personal data. Logging happens only in the data and presentation layers, never in `domain/`.
 
 ## Documentation
 - `docs/requirements.md`: every requirement from the task, numbered.

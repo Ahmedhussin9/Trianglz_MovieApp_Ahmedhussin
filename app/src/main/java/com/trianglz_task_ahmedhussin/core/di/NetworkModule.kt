@@ -1,6 +1,5 @@
 package com.trianglz_task_ahmedhussin.core.di
 
-import android.util.Log
 import com.trianglz_task_ahmedhussin.BuildConfig
 import com.trianglz_task_ahmedhussin.core.common.locale.LocaleProvider
 import com.trianglz_task_ahmedhussin.core.network.TmdbAccessToken
@@ -14,6 +13,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import timber.log.Timber
 import java.util.Locale
 import javax.inject.Singleton
 
@@ -44,7 +44,8 @@ object NetworkModule {
     ): OkHttpClient = TmdbHttpClientFactory.okHttpClient(
         accessToken = accessToken,
         localeProvider = localeProvider,
-        httpLogger = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Logger { Log.d(HTTP_LOG_TAG, it) } else null,
+        // Timber splits messages longer than Logcat's ~4 KB limit, so full JSON bodies stay readable.
+        httpLogger = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Logger { Timber.tag(HTTP_LOG_TAG).d(it) } else null,
     )
 
     @Provides

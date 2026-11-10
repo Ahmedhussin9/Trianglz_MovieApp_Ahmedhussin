@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **Current phase** | Phase 1: Movies list (Phase 0 complete) |
-| **Last completed task** | T1.2: Data, remote (discover endpoint) |
+| **Last completed task** | T0.11: Logging (added during Phase 1, after T1.2) |
 | **Next task** | T1.3: Data, cache (Room + RemoteMediator) |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
@@ -264,6 +264,8 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 - [x] **T0.9 Navigation 3 shell.** Add the `MoviesRoute` and `DetailsRoute(movieId)` keys, a `NavDisplay` with a back stack saved across configuration changes and process death, ViewModel scoping per entry, and placeholder screens. Handle edge-to-edge insets correctly from the start (targetSdk 36 forces edge-to-edge). *Test:* you can go to the placeholder details screen and back, and nothing sits under the system bars. **Covers:** R5, R19
 - [x] **T0.10 Test infrastructure.** Add `MainDispatcherRule`, test dispatchers, a `HiltTestRunner` with `testInstrumentationRunner` set, and a shared `TestData` factory. *Test:* one sample unit test and one sample instrumented Hilt test pass. **Covers:** R27, R28, R29, R30
 
+- [x] **T0.11 Logging** (added during Phase 1 at the user's request, done before T1.3). Timber 5.0.1, planted only in debug builds. HTTP traffic goes through Timber (tag `TmdbHttp`, long bodies chunked, token redacted). Handled failures are logged with their original exception at the two error boundaries (`safeApiCall`, `toDomainException`). The logging convention is in CLAUDE.md. *Test:* unit tests with a recording tree, plus a check on the emulator, online and offline. **Covers:** R21, R36, R37
+
 ### Phase 1: Movies list, built end to end first
 
 - [x] **T1.1 Domain: movies list.** Add the `Movie` model, the `MoviesRepository` interface (`fun movies(): Flow<PagingData<Movie>>`) and `GetMoviesUseCase`. *Test:* the use-case unit test with a fake repository. **Covers:** R1, R16, R27
@@ -331,7 +333,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 | R18 | Package-by-feature structure in every task; T4.2 (ADR); E16 optional |
 | R19 | T0.2, T0.8, T0.9 |
 | R20 | T0.3 (each feature's DI module) |
-| R21 | T0.6, T1.4, T2.3, T4.1 |
+| R21 | T0.6, T0.11, T1.4, T2.3, T4.1 |
 | R22 | T1.2, T2.2, T3.1, T4.1 |
 | R23 | T0.4, T0.5, T1.2, T3.2 |
 | R24 | T0.5, T3.2 |

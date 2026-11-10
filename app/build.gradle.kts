@@ -115,6 +115,9 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
 
+    // Logging (debug builds only plant a tree; release logs nothing)
+    implementation(libs.timber)
+
     // Images
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)

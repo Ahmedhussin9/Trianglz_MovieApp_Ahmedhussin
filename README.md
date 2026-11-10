@@ -34,6 +34,18 @@ The app authenticates to the TMDb API with a **v4 Read Access Token**. The token
 
 If no token is found, the build still succeeds and prints a warning. The app then can't load any data, and every request fails as *Unauthorized*.
 
+## Debugging with Logcat
+
+Debug builds log through [Timber](https://github.com/JakeWharton/timber). Release builds log nothing.
+
+| What you want to see | Logcat filter |
+|----------------------|---------------|
+| Every TMDb request and response (URL, status, time, full JSON body) | `package:mine tag:TmdbHttp` |
+| Handled failures, with the original exception and stack trace | `package:mine level:warn` |
+| Everything the app logs | `package:mine` |
+
+The access token never appears in logs: the `Authorization` header is shown as `██`.
+
 ## Build and test
 
 ```bash
