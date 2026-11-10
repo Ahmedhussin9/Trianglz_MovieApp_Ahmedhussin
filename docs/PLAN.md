@@ -5,8 +5,8 @@
 | | |
 |---|---|
 | **Current phase** | Phase 1: Movies list (Phase 0 complete) |
-| **Last completed task** | T1.1: Domain, movies list |
-| **Next task** | T1.2: Data, remote (discover endpoint) |
+| **Last completed task** | T1.2: Data, remote (discover endpoint) |
+| **Next task** | T1.3: Data, cache (Room + RemoteMediator) |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -267,7 +267,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 ### Phase 1: Movies list, built end to end first
 
 - [x] **T1.1 Domain: movies list.** Add the `Movie` model, the `MoviesRepository` interface (`fun movies(): Flow<PagingData<Movie>>`) and `GetMoviesUseCase`. *Test:* the use-case unit test with a fake repository. **Covers:** R1, R16, R27
-- [ ] **T1.2 Data, remote: discover endpoint.** Add `MoviesApi.discoverMovies(page)` (`/discover/movie?sort_by=popularity.desc`), the DTOs, `MoviesRemoteDataSource`, and DTO → entity → domain mappers **with validation**:
+- [x] **T1.2 Data, remote: discover endpoint.** Add `MoviesApi.discoverMovies(page)` (`/discover/movie?sort_by=popularity.desc`), the DTOs, `MoviesRemoteDataSource`, and DTO → entity → domain mappers **with validation**:
   - drop items with no ID or a blank title;
   - a null poster becomes a placeholder;
   - an invalid date means no year is shown;
@@ -302,7 +302,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 ### Phase 4: Quality, documentation and delivery
 
 - [ ] **T4.1 Error and validation review.** Go through every `DomainError` on every screen on a device (airplane mode, bad token → 401, slow network) and fix the gaps. Check accessibility basics: content descriptions, touch targets, font scaling. *Test:* a manual checklist in the feature doc. **Covers:** R21, R22, R32, R36, R37
-- [ ] **T4.2 Code and architecture documentation.** Run a KDoc pass on public APIs. Write `docs/ARCHITECTURE.md` (layers, data flow, the cache flow, how the names map to MVI) and `docs/adr/` with records for MVI naming, `PagingData` outside `UiState`, `RemoteMediator` vs a manual cache, the certification-filter limitation on search, single module vs multi-module, and Navigation 3. **Covers:** R34, R35, R40, R46, R18
+- [ ] **T4.2 Code and architecture documentation.** Run a KDoc pass on public APIs. Write `docs/ARCHITECTURE.md` (layers, data flow, the cache flow, how the names map to MVI) and `docs/adr/` with records for MVI naming, `PagingData` outside `UiState`, `RemoteMediator` vs a manual cache, the certification-filter limitation on search, single module vs multi-module, **package by feature vs package by layer** (with the comparison table from T1.2), and Navigation 3. **Covers:** R34, R35, R40, R46, R18
 - [ ] **T4.3 README.** Cover the overview, feature list, tech stack, architecture summary (linking to the docs), the TMDb token setup, how to run the app and the tests, and the known limitations. **Covers:** R44, R45, R40
 - [ ] **T4.4 AI usage document.** Write `docs/AI_USAGE.md`: how AI was used (CLAUDE.md rules, requirement extraction, planning, task-by-task work with human review, and verification on a device), what was checked by hand, and its limits. **Covers:** R39
 - [ ] **T4.5 Release and submission.** Create `release/1.0.0` from `develop`, update the version, merge into `master` and back into `develop`, and tag `v1.0.0`. Push to a **public** GitHub repository and check that no secrets are in the history. Attach a debug APK built with our token to the `v1.0.0` GitHub release, and send the token privately with the submission (Q18). Share the link, and regenerate the token after the review. **Covers:** R31, R42, R43, R47
