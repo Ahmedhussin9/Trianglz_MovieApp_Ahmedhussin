@@ -11,6 +11,12 @@ import androidx.compose.ui.graphics.Color
  * conventions (tone 40 on light, tone 80 on dark). Contrast is verified by ColorContrastTest.
  */
 
+/**
+ * Text and icons drawn on the dark gradient over a poster. Posters can be any colour, so the
+ * scrim is always dark and this stays white in both themes.
+ */
+val OnPosterScrim = Color(0xFFFFFFFF)
+
 internal val LightColors: ColorScheme = lightColorScheme(
     primary = Color(0xFF855300),
     onPrimary = Color(0xFFFFFFFF),

@@ -8,7 +8,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.trianglz_task_ahmedhussin.feature.details.presentation.DetailsScreen
-import com.trianglz_task_ahmedhussin.feature.movies.presentation.MoviesScreen
+import com.trianglz_task_ahmedhussin.feature.movies.presentation.MoviesRoute
 
 /**
  * The app's navigation host.
@@ -34,7 +34,7 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         ),
         entryProvider = entryProvider {
             entry<MoviesRoute> {
-                MoviesScreen(onMovieClick = { movieId -> backStack.add(DetailsRoute(movieId)) })
+                MoviesRoute(onMovieClick = { movieId -> backStack.add(DetailsRoute(movieId)) })
             }
             entry<DetailsRoute> { route ->
                 DetailsScreen(

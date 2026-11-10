@@ -6,9 +6,16 @@
     <string name="action_retry">إعادة المحاولة</string>
     <string name="action_back">رجوع</string>
 
-    <!-- Navigation-shell stubs (T0.9); removed when the real screens land in T1.5 / T2.4 -->
-    <string name="placeholder_movies_body">ستتوفر قائمة الأفلام في المرحلة الأولى.</string>
-    <string name="placeholder_open_sample_movie">افتح فيلمًا تجريبيًا</string>
+    <string name="action_dismiss">إغلاق</string>
+    <string name="action_scroll_to_top">العودة إلى الأعلى</string>
+    <string name="loading_more">جارٍ تحميل المزيد من الأفلام…</string>
+
+    <!-- Movies list -->
+    <string name="movies_empty_title">لا توجد أفلام لعرضها</string>
+    <string name="movies_empty_message">يُرجى المحاولة لاحقًا.</string>
+    <string name="movies_cached_notice">تعذّر التحديث. يتم عرض الأفلام المحفوظة.</string>
+
+    <!-- Navigation-shell stub (T0.9); removed when the real Details screen lands in T2.4 -->
     <string name="placeholder_details_title">الفيلم رقم %1$d</string>
     <string name="rating_content_description">التقييم %1$s من 10</string>
 
