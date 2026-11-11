@@ -94,7 +94,7 @@ The user decided on 2026-11-10 not to build the backend bonus (see Q10). The poi
 | Q9 | Git Flow: should `develop` be created now, and who creates branches and commits? | `develop` was created from `master` on 2026-11-10 with the user's permission. Commits still happen only when the user asks (CLAUDE.md). |
 | Q10 | Is the bonus backend (R48–R54) in scope? | No. The whole backend flow is skipped. |
 | Q14 | TMDb content language: always `en-US`, or follow the app locale? | Follow the app locale (`en-US` / `ar-SA`). When the locale changes, the content is fetched again in the new language. |
-| Q17 | Is `minSdk 24` acceptable? | Yes, it stays at 24. |
+| Q17 | Is `minSdk 24` acceptable? | It was 24 until T2.1, then raised to **26** (user decision, 2026-11-11) so the details screen can show a full, localized release date with `java.time`. API 24–25 devices are no longer supported. |
 | Q18 | How do reviewers run the app without our token? | All four options were chosen on 2026-11-10. **(1)** Every automated test uses MockWebServer or fakes, so no token is needed to run them. **(2)** The README explains how to get a free token. **(3)** A debug APK built with our token is attached to the GitHub release `v1.0.0`, and the token is regenerated after the review. **(4)** The token is also sent privately with the submission, never in the repo. Covered by T4.3 and T4.5. |
 
 ### Assumptions to validate

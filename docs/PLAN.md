@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| **Current phase** | Phase 1: Movies list, all tasks done (Phase 1 PR next) |
-| **Last completed task** | T1.6: UI tests, Movies screen (awaiting the user's check) |
-| **Next task** | Phase 1 PR into `develop`, then T2.1: Domain, details |
+| **Current phase** | Phase 2: Movie details, all tasks done (Phase 2 PR next) |
+| **Last completed task** | T2.5: UI test, list to details navigation |
+| **Next task** | Phase 2 PR into `develop`, then T3.1: Domain, search |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -32,7 +32,7 @@ Versions are not fixed here. They are looked up as current stable releases durin
 | Navigation 3 | The CLAUDE.md default. The back stack is plain state, it works with Hilt ViewModels, and it supports adaptive scenes later (E7). |
 | Paging 3 + `RemoteMediator` | Pagination (R3) with built-in footer load states (R4). `RemoteMediator` combined with Room gives the cache-then-network flow (R7–R10). |
 | Room | Local cache for the list and details (R7, R38). Its `PagingSource` emits updates automatically when data changes (R10). |
-| DataStore | Only for extras (theme and language preferences, E1/E2). |
+| DataStore | The theme preference (E1, done in T2.6). The language is stored by AndroidX per-app locales instead. |
 | JUnit, MockK, Turbine, kotlinx-coroutines-test | Unit tests (R27–R29), as CLAUDE.md specifies. |
 | MockWebServer | Data-layer tests of real Retrofit calls, including checking that R24–R26 are present on every request. |
 | paging-testing, Room testing | `RemoteMediator` and DAO tests. |
@@ -141,12 +141,17 @@ sequenceDiagram
     │   │   │                      ListStatus mapper, MoviesScreen
     │   │   └── component/         MovieGrid, MovieSearchBar, CachedDataBanner
     │   └── di/                    MoviesModule
-    └── details/
-        ├── data/                  remote (DetailsApi, DTO), local (MovieDetailsEntity, DAO), mapper, repository
-        ├── domain/                MovieDetails, MovieDetailsRepository, GetMovieDetailsUseCase
-        ├── presentation/          DetailsViewModel, DetailsUiState, DetailsUiAction, DetailsEffect, DetailsScreen
-        │   └── component/         BackdropHeader, RatingRing, GenreChips, Synopsis, InfoRow
-        └── di/                    DetailsModule
+    ├── details/
+    │   ├── data/                  remote (DetailsApi, DTO), local (MovieDetailsEntity, DAO), mapper, repository
+    │   ├── domain/                MovieDetails, MovieDetailsRepository, GetMovieDetailsUseCase
+    │   ├── presentation/          DetailsViewModel, DetailsUiState, DetailsUiAction, DetailsEffect, DetailsScreen
+    │   │   └── component/         DetailsHeader, DetailsTopBar, InfoRow, GenreChips, RatingSection, Synopsis
+    │   └── di/                    DetailsModule
+    └── settings/                  (T2.6, extras E1 + E2)
+        ├── data/                  ThemeModeDataSource (DataStore), AppLanguageDataSource (per-app locales), NightModeApplier, repository
+        ├── domain/                ThemeMode, AppLanguage, SettingsRepository, use cases
+        ├── presentation/          SettingsViewModel, SettingsUiState, SettingsUiAction, SettingsEffect, SettingsScreen
+        └── di/                    SettingsModule (DataStore)
 ```
 
 ## 4. Screens
@@ -186,14 +191,14 @@ sequenceDiagram
 
 | Field | Type | Meaning |
 |-------|------|---------|
-| `status` | `Loading` \| `Content(details: MovieDetailsUi)` \| `Error(error: UiError)` | Main screen state. |
+| `status` | `Loading` \| `Content(details: MovieDetailsUi)` \| `Error(error: DomainError)` | Main screen state. |
 | `isRefreshing` | `Boolean` | Cached content is shown while the network refresh is still running. |
-| `synopsisExpanded` | `Boolean` | Whether the synopsis is expanded. |
+| `isSynopsisExpanded` | `Boolean` | Whether the synopsis is expanded. |
 
-`MovieDetailsUi` holds: title, tagline, backdrop/poster URLs, release date, runtime, rating (0–10) and vote count, genres, synopsis, original language, and status.
+`MovieDetailsUi` holds: title, tagline, backdrop/poster URLs, release date (formatted in the user's locale), runtime, rating (0–10) and vote count, genres, synopsis, original language, and status (a translated `ReleaseStatus`).
 
 **User actions (`DetailsUiAction`):** `Retry`, `Back`, `ToggleSynopsis`.
-**Effects (`DetailsEffect`):** `NavigateBack`, `ShowSnackbar(message)`.
+**Effects (`DetailsEffect`):** `NavigateBack`, `ShowRefreshError(error)` (a snackbar while cached details stay on screen).
 
 | State | When | UI |
 |-------|------|----|
@@ -209,7 +214,7 @@ No design was provided, so this is a simple, clean Material 3 look with a cinema
 - **Color scheme:** generated from a warm **amber** seed (a "marquee light" feel). The primary color is amber for key actions and rating highlights. The tertiary color is deep **teal** for genre chips and accents. Neutrals are cool **slate** surfaces, so posters stand out. Dark mode uses near-black slate surfaces with toned-down amber. Contrast is checked against WCAG AA.
 - **Typography:** **Outfit** (geometric, cinematic) for display, headline and title styles, and **Inter** for body and label styles. Both are bundled as font resources and both have Arabic-compatible fallbacks.
 - **Shapes and cards:** poster cards use a 2:3 aspect ratio and 16dp rounded corners, with no border and a low tonal elevation. At the bottom there is a gradient scrim with the title (two lines maximum) and the release year. A small amber **rating pill** sits in the top-end corner. A grid adapts to 2 or more columns depending on width.
-- **Details layout:** a full-width backdrop hero that fades into the surface. The poster overlaps the hero at the start edge. Below come the title, tagline, info row (year · runtime · language), genre chips, the rating ring and the synopsis.
+- **Details layout:** a full-width backdrop hero that fades into the surface. The poster overlaps the hero at the start edge. Below come the title, tagline, info row (release date · runtime · language), genre chips, the rating ring and the synopsis.
 - **Motion:** short and subtle. Motion tokens use Material 3 easing at 200–400 ms, and motion is reduced when the system's "remove animations" setting is on.
 
 **Animations, exactly these and only these in the required work:**
@@ -287,11 +292,12 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 
 ### Phase 2: Movie details
 
-- [ ] **T2.1 Domain: details.** Add the `MovieDetails` model, the `MovieDetailsRepository` interface (`fun details(id): Flow<AppResult<MovieDetails>>`, which emits the cached value first and then the fresh one) and `GetMovieDetailsUseCase`. *Test:* use-case unit tests. **Covers:** R6, R16, R27
-- [ ] **T2.2 Data: details plus cache.** Add `/movie/{id}`, the DTO, `MovieDetailsEntity` (genres stored through a converter), the DAO, mappers with validation, and a cache-then-network repository: emit the cached row, fetch, save to the database, and emit again. On failure with a cache, keep the cached data and emit the error as a non-blocking signal. *Test:* MockWebServer tests, repository tests with a fake DAO for both cache-hit and cache-miss paths, and a 404 mapping to `NotFound`. **Covers:** R6, R7, R22, R28, R38
-- [ ] **T2.3 Presentation: DetailsViewModel.** Receive the movie ID from `DetailsRoute` through assisted injection or a key. Add `DetailsUiState` with `status`, `isRefreshing` and `synopsisExpanded`, the actions, and the effects. *Test:* ViewModel tests for loading → content, cached → refreshed, error → retry → content, and toggling the synopsis. **Covers:** R6, R17, R21, R29
-- [ ] **T2.4 UI: Details screen.** Add the backdrop hero, the overlapping poster, the info row, genre chips, `RatingRing`, the expandable synopsis, the four states, and animations A2, A4, A6, A7 and A8. Add previews (light, dark, RTL). *Test:* checked on a device with online, offline-with-cache and offline-without-cache. **Covers:** R6, R32, R33
-- [ ] **T2.5 UI test: list to details navigation.** A Hilt instrumented test with a fake repository: tap a card, then the details title is shown, then Back returns to the list. **Covers:** R5, R30
+- [x] **T2.1 Domain: details.** Add the `MovieDetails` model (with `Genre` and the `ReleaseStatus` enum), the `MovieDetailsRepository` interface (`fun movieDetails(id): Flow<AppResult<MovieDetails>>`, which emits the cached value first, then the network outcome, then completes) and `GetMovieDetailsUseCase` (non-positive IDs fail as `NotFound`). *Test:* use-case unit tests. **Covers:** R6, R16, R27
+- [x] **T2.2 Data: details plus cache.** Add `/movie/{id}`, the DTO, `MovieDetailsEntity` (genres as JSON and the release date as ISO text, through type converters; database version 2), the DAO, mappers with validation, and a cache-then-network repository: emit the cached row, fetch, save to the database, and emit again. On failure with a cache, keep the cached data and emit the error as a non-blocking signal. Shared TMDb value validation (rating clamp, strict `java.time` date parsing) moves to `core/network/TmdbValues.kt` and replaces the T1.2 regex. *Test:* MockWebServer tests, repository tests with a fake DAO for both cache-hit and cache-miss paths, a 404 mapping to `NotFound`, and an instrumented DAO test for the converters. **Covers:** R6, R7, R22, R28, R38
+- [x] **T2.3 Presentation: DetailsViewModel.** Receive the movie ID from `DetailsRoute` through assisted injection (`@HiltViewModel(assistedFactory = …)`). Add `DetailsUiState` with `status`, `isRefreshing` and `isSynopsisExpanded`, the actions, the effects, and `MovieDetailsUi` with locale-aware formatting. *Test:* ViewModel tests for loading → content, cached → refreshed, error → retry → content, and toggling the synopsis. **Covers:** R6, R17, R21, R29
+- [x] **T2.4 UI: Details screen.** Add the backdrop hero, the overlapping poster, the info row, genre chips, `RatingRing`, the expandable synopsis, the four states, and animations A2, A4, A6, A7 and A8. Add previews (light, dark, RTL). *Test:* checked on a device with online, offline-with-cache and offline-without-cache, plus Compose UI tests for the stateless screen (`DetailsScreenTest`). **Covers:** R6, R32, R33
+- [x] **T2.5 UI test: list to details navigation.** A Hilt instrumented test with fake repositories (swapped in for this class only with `@UninstallModules` and a nested module): tap a card, then the details are shown, then Back (button and system back) returns to the list, and each movie opens its own details. **Covers:** R5, R30
+- [x] **T2.6 Settings: language and theme** (extras E1 + E2, pulled forward at the user's request so every later task can be checked in Arabic and English, light and dark; done before T2.5). A Settings screen opened from the Movies top bar, with Language (System / English / العربية) through AndroidX per-app locales, and Theme (System / Light / Dark) stored in DataStore and applied with AppCompat night mode. The movie list is fetched again after a language switch (Q14). Numbers, years and dates use the locale's digits. *Test:* unit tests for the ViewModel, the DataStore source and the mappings; checked on a device (Arabic RTL, light and dark, choices kept after an app restart). **Covers:** R32, R33 (E1, E2)
 
 ### Phase 3: Search
 
@@ -370,8 +376,8 @@ None of these are required by the PDF, and they don't block submission. Effort: 
 
 | ID | Extra | Effort | Notes |
 |----|-------|--------|-------|
-| E1 | Dark mode with a theme switch (System / Light / Dark) on a Settings screen | M | Adds a Settings route and DataStore. The dark color scheme already exists from T0.8. |
-| E2 | Arabic and English with full RTL and an in-app language switch | M | Per-app locales (`AppCompatDelegate.setApplicationLocales` / `LocaleManager`). Switching clears the cache and refetches in the new language (Q14). Includes an RTL QA pass. |
+| E1 | Dark mode with a theme switch (System / Light / Dark) on a Settings screen | M | **Done in T2.6.** |
+| E2 | Arabic and English with full RTL and an in-app language switch | M | **Done in T2.6** (per-app locales; the list is fetched again after a switch). The full RTL QA pass stays part of T4.1. |
 | E3 | Shared-element transition from poster card to details poster | M | `SharedTransitionLayout` with Navigation 3 animated content. |
 | E4 | Shimmer loading placeholders | S | Replaces the static placeholders in the Loading states. |
 | E5 | Pull-to-refresh on the movie list | S | `PullToRefreshBox` → `lazyItems.refresh()`. |

@@ -65,6 +65,18 @@ class MoviesViewModelTest {
     }
 
     @Test
+    fun `the settings button emits a single navigation effect`() = runTest(mainDispatcherRule.testDispatcher) {
+        val viewModel = viewModel()
+
+        viewModel.effects.test {
+            viewModel.onAction(MoviesUiAction.SettingsClicked)
+
+            assertEquals(MoviesEffect.NavigateToSettings, awaitItem())
+            expectNoEvents()
+        }
+    }
+
+    @Test
     fun `dismissing the cached notice updates the state`() {
         val viewModel = viewModel()
         assertFalse(viewModel.state.value.isCachedNoticeDismissed)

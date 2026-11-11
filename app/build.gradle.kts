@@ -44,7 +44,7 @@ android {
 
     defaultConfig {
         applicationId = "com.trianglz_task_ahmedhussin"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -85,6 +85,8 @@ room {
 dependencies {
     // AndroidX core & lifecycle
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
