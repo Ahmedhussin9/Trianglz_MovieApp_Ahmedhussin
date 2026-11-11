@@ -15,3 +15,7 @@ data object MoviesRoute : NavKey
 /** Details of one movie (R5, R6). Only the id is passed; the screen loads everything else. */
 @Serializable
 data class DetailsRoute(val movieId: Int) : NavKey
+
+/** App settings: language and theme (extras E1, E2). Opened from the Movies top bar. */
+@Serializable
+data object SettingsRoute : NavKey

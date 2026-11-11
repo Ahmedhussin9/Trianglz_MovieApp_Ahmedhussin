@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,11 +21,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -55,12 +62,25 @@ import kotlinx.coroutines.launch
 @Composable
 fun MoviesRoute(
     onMovieClick: (movieId: Int) -> Unit,
+    onSettingsClick: () -> Unit,
     viewModel: MoviesViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val movies = viewModel.movies.collectAsLazyPagingItems()
     val currentOnMovieClick by rememberUpdatedState(onMovieClick)
+    val currentOnSettingsClick by rememberUpdatedState(onSettingsClick)
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    // Cached titles and synopses are in the language they were downloaded in. After a language
+    // switch in Settings, the list is fetched again so it matches the new language (Q14).
+    val language = LocalConfiguration.current.locales[0].language
+    var listLanguage by rememberSaveable { mutableStateOf(language) }
+    LaunchedEffect(language) {
+        if (language != listLanguage) {
+            listLanguage = language
+            movies.refresh()
+        }
+    }
 
     // Effects are collected only while the screen is visible, so a navigation event can
     // never fire while the app is in the background.
@@ -69,6 +89,7 @@ fun MoviesRoute(
             viewModel.effects.collect { effect ->
                 when (effect) {
                     is MoviesEffect.NavigateToDetails -> currentOnMovieClick(effect.movieId)
+                    MoviesEffect.NavigateToSettings -> currentOnSettingsClick()
                 }
             }
         }
@@ -101,6 +122,14 @@ fun MoviesScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
+                actions = {
+                    IconButton(onClick = { onAction(MoviesUiAction.SettingsClicked) }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_settings),
+                            contentDescription = stringResource(R.string.action_settings),
+                        )
+                    }
+                },
                 scrollBehavior = scrollBehavior,
             )
         },

@@ -5,17 +5,32 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.request.crossfade
+import com.trianglz_task_ahmedhussin.feature.settings.data.NightModeApplier
+import com.trianglz_task_ahmedhussin.feature.settings.domain.usecase.ObserveThemeModeUseCase
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
+import javax.inject.Inject
 
 /**
  * Application entry point. [HiltAndroidApp] generates the application-level
  * dependency container that every other Hilt component is a child of.
  *
- * It also configures the app-wide Coil image loader (posters and backdrops).
+ * It also configures the app-wide Coil image loader (posters and backdrops) and applies the
+ * saved theme choice.
  */
 @HiltAndroidApp
 class MovieApplication : Application(), SingletonImageLoader.Factory {
+
+    @Inject
+    lateinit var observeThemeMode: ObserveThemeModeUseCase
+
+    /** Lives as long as the process; used only to follow theme changes on the main thread. */
+    private val applicationScope = MainScope()
 
     override fun onCreate() {
         super.onCreate()
@@ -24,6 +39,17 @@ class MovieApplication : Application(), SingletonImageLoader.Factory {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+        applyThemeMode()
+    }
+
+    /**
+     * The saved theme is read once, blocking, before any activity exists: a tiny preferences
+     * file, and it means the first screen already opens in the chosen theme instead of flashing
+     * the system one and then switching. Later changes (from Settings) are applied as they come.
+     */
+    private fun applyThemeMode() {
+        NightModeApplier.apply(runBlocking { observeThemeMode().first() })
+        observeThemeMode().onEach(NightModeApplier::apply).launchIn(applicationScope)
     }
 
     /**

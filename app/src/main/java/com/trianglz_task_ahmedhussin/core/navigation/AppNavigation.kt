@@ -9,6 +9,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.trianglz_task_ahmedhussin.feature.details.presentation.MovieDetailsRoute
 import com.trianglz_task_ahmedhussin.feature.movies.presentation.MoviesRoute
+import com.trianglz_task_ahmedhussin.feature.settings.presentation.SettingsRoute
 
 /**
  * The app's navigation host.
@@ -34,7 +35,14 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         ),
         entryProvider = entryProvider {
             entry<MoviesRoute> {
-                MoviesRoute(onMovieClick = { movieId -> backStack.add(DetailsRoute(movieId)) })
+                MoviesRoute(
+                    onMovieClick = { movieId -> backStack.add(DetailsRoute(movieId)) },
+                    // A double tap must not stack two Settings screens.
+                    onSettingsClick = { if (backStack.lastOrNull() != SettingsRoute) backStack.add(SettingsRoute) },
+                )
+            }
+            entry<SettingsRoute> {
+                SettingsRoute(onBack = { backStack.remove(SettingsRoute) })
             }
             entry<DetailsRoute> { route ->
                 MovieDetailsRoute(

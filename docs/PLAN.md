@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **Current phase** | Phase 2: Movie details (Phase 0 and Phase 1 complete) |
-| **Last completed task** | T2.4: UI, Details screen (awaiting the user's check) |
+| **Last completed task** | T2.6: Settings, language and theme (awaiting the user's check) |
 | **Next task** | T2.5: UI test, list to details navigation |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
@@ -32,7 +32,7 @@ Versions are not fixed here. They are looked up as current stable releases durin
 | Navigation 3 | The CLAUDE.md default. The back stack is plain state, it works with Hilt ViewModels, and it supports adaptive scenes later (E7). |
 | Paging 3 + `RemoteMediator` | Pagination (R3) with built-in footer load states (R4). `RemoteMediator` combined with Room gives the cache-then-network flow (R7–R10). |
 | Room | Local cache for the list and details (R7, R38). Its `PagingSource` emits updates automatically when data changes (R10). |
-| DataStore | Only for extras (theme and language preferences, E1/E2). |
+| DataStore | The theme preference (E1, done in T2.6). The language is stored by AndroidX per-app locales instead. |
 | JUnit, MockK, Turbine, kotlinx-coroutines-test | Unit tests (R27–R29), as CLAUDE.md specifies. |
 | MockWebServer | Data-layer tests of real Retrofit calls, including checking that R24–R26 are present on every request. |
 | paging-testing, Room testing | `RemoteMediator` and DAO tests. |
@@ -141,12 +141,17 @@ sequenceDiagram
     │   │   │                      ListStatus mapper, MoviesScreen
     │   │   └── component/         MovieGrid, MovieSearchBar, CachedDataBanner
     │   └── di/                    MoviesModule
-    └── details/
-        ├── data/                  remote (DetailsApi, DTO), local (MovieDetailsEntity, DAO), mapper, repository
-        ├── domain/                MovieDetails, MovieDetailsRepository, GetMovieDetailsUseCase
-        ├── presentation/          DetailsViewModel, DetailsUiState, DetailsUiAction, DetailsEffect, DetailsScreen
-        │   └── component/         DetailsHeader, DetailsTopBar, InfoRow, GenreChips, RatingSection, Synopsis
-        └── di/                    DetailsModule
+    ├── details/
+    │   ├── data/                  remote (DetailsApi, DTO), local (MovieDetailsEntity, DAO), mapper, repository
+    │   ├── domain/                MovieDetails, MovieDetailsRepository, GetMovieDetailsUseCase
+    │   ├── presentation/          DetailsViewModel, DetailsUiState, DetailsUiAction, DetailsEffect, DetailsScreen
+    │   │   └── component/         DetailsHeader, DetailsTopBar, InfoRow, GenreChips, RatingSection, Synopsis
+    │   └── di/                    DetailsModule
+    └── settings/                  (T2.6, extras E1 + E2)
+        ├── data/                  ThemeModeDataSource (DataStore), AppLanguageDataSource (per-app locales), NightModeApplier, repository
+        ├── domain/                ThemeMode, AppLanguage, SettingsRepository, use cases
+        ├── presentation/          SettingsViewModel, SettingsUiState, SettingsUiAction, SettingsEffect, SettingsScreen
+        └── di/                    SettingsModule (DataStore)
 ```
 
 ## 4. Screens
@@ -292,6 +297,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 - [x] **T2.3 Presentation: DetailsViewModel.** Receive the movie ID from `DetailsRoute` through assisted injection (`@HiltViewModel(assistedFactory = …)`). Add `DetailsUiState` with `status`, `isRefreshing` and `isSynopsisExpanded`, the actions, the effects, and `MovieDetailsUi` with locale-aware formatting. *Test:* ViewModel tests for loading → content, cached → refreshed, error → retry → content, and toggling the synopsis. **Covers:** R6, R17, R21, R29
 - [x] **T2.4 UI: Details screen.** Add the backdrop hero, the overlapping poster, the info row, genre chips, `RatingRing`, the expandable synopsis, the four states, and animations A2, A4, A6, A7 and A8. Add previews (light, dark, RTL). *Test:* checked on a device with online, offline-with-cache and offline-without-cache, plus Compose UI tests for the stateless screen (`DetailsScreenTest`). **Covers:** R6, R32, R33
 - [ ] **T2.5 UI test: list to details navigation.** A Hilt instrumented test with a fake repository: tap a card, then the details title is shown, then Back returns to the list. **Covers:** R5, R30
+- [x] **T2.6 Settings: language and theme** (extras E1 + E2, pulled forward at the user's request so every later task can be checked in Arabic and English, light and dark; done before T2.5). A Settings screen opened from the Movies top bar, with Language (System / English / العربية) through AndroidX per-app locales, and Theme (System / Light / Dark) stored in DataStore and applied with AppCompat night mode. The movie list is fetched again after a language switch (Q14). Numbers, years and dates use the locale's digits. *Test:* unit tests for the ViewModel, the DataStore source and the mappings; checked on a device (Arabic RTL, light and dark, choices kept after an app restart). **Covers:** R32, R33 (E1, E2)
 
 ### Phase 3: Search
 
@@ -370,8 +376,8 @@ None of these are required by the PDF, and they don't block submission. Effort: 
 
 | ID | Extra | Effort | Notes |
 |----|-------|--------|-------|
-| E1 | Dark mode with a theme switch (System / Light / Dark) on a Settings screen | M | Adds a Settings route and DataStore. The dark color scheme already exists from T0.8. |
-| E2 | Arabic and English with full RTL and an in-app language switch | M | Per-app locales (`AppCompatDelegate.setApplicationLocales` / `LocaleManager`). Switching clears the cache and refetches in the new language (Q14). Includes an RTL QA pass. |
+| E1 | Dark mode with a theme switch (System / Light / Dark) on a Settings screen | M | **Done in T2.6.** |
+| E2 | Arabic and English with full RTL and an in-app language switch | M | **Done in T2.6** (per-app locales; the list is fetched again after a switch). The full RTL QA pass stays part of T4.1. |
 | E3 | Shared-element transition from poster card to details poster | M | `SharedTransitionLayout` with Navigation 3 animated content. |
 | E4 | Shimmer loading placeholders | S | Replaces the static placeholders in the Loading states. |
 | E5 | Pull-to-refresh on the movie list | S | `PullToRefreshBox` → `lazyItems.refresh()`. |

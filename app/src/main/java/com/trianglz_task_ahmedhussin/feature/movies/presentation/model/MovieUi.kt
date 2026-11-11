@@ -22,6 +22,7 @@ fun Movie.toUi(locale: Locale = Locale.getDefault()) = MovieUi(
     id = id,
     title = title,
     posterUrl = posterUrl,
-    yearText = releaseYear?.toString(),
+    // Locale-aware so Arabic shows Arabic-Indic digits, matching the rating badge next to it.
+    yearText = releaseYear?.let { String.format(locale, "%d", it) },
     ratingText = rating.takeIf { it > 0.0 }?.let { String.format(locale, "%.1f", it) },
 )

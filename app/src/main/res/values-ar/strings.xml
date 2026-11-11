@@ -10,6 +10,15 @@
     <string name="action_scroll_to_top">العودة إلى الأعلى</string>
     <string name="loading_more">جارٍ تحميل المزيد من الأفلام…</string>
 
+    <!-- Settings -->
+    <string name="action_settings">الإعدادات</string>
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_language">اللغة</string>
+    <string name="settings_theme">المظهر</string>
+    <string name="settings_option_system">افتراضي النظام</string>
+    <string name="settings_theme_light">فاتح</string>
+    <string name="settings_theme_dark">داكن</string>
+
     <!-- Movies list -->
     <string name="movies_empty_title">لا توجد أفلام لعرضها</string>
     <string name="movies_empty_message">يُرجى المحاولة لاحقًا.</string>

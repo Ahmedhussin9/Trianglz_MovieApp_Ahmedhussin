@@ -52,6 +52,7 @@ class MoviesViewModel @Inject constructor(
                 _effects.send(MoviesEffect.NavigateToDetails(action.movieId))
             }
             MoviesUiAction.DismissCachedNotice -> _state.update { it.copy(isCachedNoticeDismissed = true) }
+            MoviesUiAction.SettingsClicked -> viewModelScope.launch { _effects.send(MoviesEffect.NavigateToSettings) }
         }
     }
 }

@@ -39,4 +39,9 @@ class MovieUiTest {
         assertNull(ui.yearText)
         assertNull(ui.posterUrl)
     }
+
+    @Test
+    fun `year uses the locale's digits`() {
+        assertEquals("٢٠٠٨", TestData.movie(releaseYear = 2008).toUi(Locale.forLanguageTag("ar")).yearText)
+    }
 }

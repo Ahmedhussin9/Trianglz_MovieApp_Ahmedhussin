@@ -19,8 +19,10 @@ data class MoviesUiState(
 sealed interface MoviesUiAction {
     data class MovieClicked(val movieId: Int) : MoviesUiAction
     data object DismissCachedNotice : MoviesUiAction
+    data object SettingsClicked : MoviesUiAction
 }
 
 sealed interface MoviesEffect {
     data class NavigateToDetails(val movieId: Int) : MoviesEffect
+    data object NavigateToSettings : MoviesEffect
 }

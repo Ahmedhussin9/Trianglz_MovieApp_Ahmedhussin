@@ -3,6 +3,7 @@ package com.trianglz_task_ahmedhussin.feature.details.presentation.model
 import com.trianglz_task_ahmedhussin.testing.TestData
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 import java.util.Locale
@@ -34,6 +35,13 @@ class MovieDetailsUiTest {
         assertEquals("8,0", ui.ratingText)
         assertEquals("18.924", ui.voteCountText)
         assertEquals("Englisch", ui.languageText)
+    }
+
+    @Test
+    fun `release date uses the locale's digits`() {
+        val text = details.toUi(Locale.forLanguageTag("ar")).releaseDateText!!
+
+        assertTrue(text, text.contains("١٩٩٥"))
     }
 
     @Test

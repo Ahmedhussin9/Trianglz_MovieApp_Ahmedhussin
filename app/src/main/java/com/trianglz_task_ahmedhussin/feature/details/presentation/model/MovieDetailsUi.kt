@@ -5,6 +5,7 @@ import com.trianglz_task_ahmedhussin.feature.details.domain.model.MovieDetails
 import com.trianglz_task_ahmedhussin.feature.details.domain.model.ReleaseStatus
 import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
+import java.time.format.DecimalStyle
 import java.time.format.FormatStyle
 import java.util.Locale
 
@@ -49,7 +50,12 @@ fun MovieDetails.toUi(locale: Locale): MovieDetailsUi {
         overview = overview,
         posterUrl = posterUrl,
         backdropUrl = backdropUrl,
-        releaseDateText = releaseDate?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)),
+        releaseDateText = releaseDate?.format(
+            DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+                .withLocale(locale)
+                // Without this java.time keeps Latin digits even in Arabic, unlike the numbers around it.
+                .withDecimalStyle(DecimalStyle.of(locale)),
+        ),
         runtimeMinutes = runtimeMinutes,
         ratingFraction = if (hasVotes) (rating / MAX_RATING).toFloat() else 0f,
         // A "0.0" ring would read as "terrible" rather than "unrated", as on the list cards.
