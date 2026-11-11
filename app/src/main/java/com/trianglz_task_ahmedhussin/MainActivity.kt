@@ -1,6 +1,7 @@
 package com.trianglz_task_ahmedhussin
 
 import android.os.Bundle
+import android.os.LocaleList
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -20,10 +21,28 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        syncDefaultLocaleWithResources()
         setContent {
             MovieAppTheme {
                 AppNavigation()
             }
+        }
+    }
+
+    /**
+     * Makes `Locale.getDefault()` the locale this activity's resources use.
+     *
+     * Numbers and dates are formatted with `Locale.getDefault()` (ViewModels, the TMDb `language`
+     * parameter), while translated strings with numbers are formatted by Android with the
+     * resources' locale. With a per-app language on Android 13+ (an Arabic app on an English
+     * phone), the platform does not reliably update the default, so the two could disagree and
+     * mix digit styles. A language change recreates this activity, so syncing here keeps one
+     * source of truth.
+     */
+    private fun syncDefaultLocaleWithResources() {
+        val locales = resources.configuration.locales
+        if (locales != LocaleList.getDefault()) {
+            LocaleList.setDefault(locales)
         }
     }
 }
