@@ -18,6 +18,7 @@ import java.util.Locale
  * @property releaseDateText for example "Oct 30, 1995" in English, formatted in the user's locale.
  * @property ratingFraction rating as 0–1, for the rating ring.
  * @property ratingText rating with one decimal ("8.0"), or `null` when nobody has voted yet.
+ * @property voteCount raw count, which the UI needs to pick the plural form ("1 vote" / "5 votes").
  * @property voteCountText vote count with grouping ("18,924").
  * @property languageText original language in the user's language ("English"), or `null`.
  */
@@ -32,6 +33,7 @@ data class MovieDetailsUi(
     val runtimeMinutes: Int?,
     val ratingFraction: Float,
     val ratingText: String?,
+    val voteCount: Int,
     val voteCountText: String,
     val genres: List<Genre>,
     val languageText: String?,
@@ -52,6 +54,7 @@ fun MovieDetails.toUi(locale: Locale): MovieDetailsUi {
         ratingFraction = if (hasVotes) (rating / MAX_RATING).toFloat() else 0f,
         // A "0.0" ring would read as "terrible" rather than "unrated", as on the list cards.
         ratingText = if (hasVotes) String.format(locale, "%.1f", rating) else null,
+        voteCount = voteCount,
         voteCountText = NumberFormat.getIntegerInstance(locale).format(voteCount),
         genres = genres,
         languageText = originalLanguage?.toLanguageName(locale),

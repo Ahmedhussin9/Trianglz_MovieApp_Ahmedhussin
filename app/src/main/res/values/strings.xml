@@ -15,9 +15,28 @@
     <string name="movies_empty_message">Please check back later.</string>
     <string name="movies_cached_notice">Couldn\'t refresh. Showing saved movies.</string>
 
-    <!-- Navigation-shell stub (T0.9); removed when the real Details screen lands in T2.4 -->
-    <string name="placeholder_details_title">Movie #%1$d</string>
     <string name="rating_content_description">Rated %1$s out of 10</string>
+
+    <!-- Movie details -->
+    <string name="action_read_more">Read more</string>
+    <string name="action_show_less">Show less</string>
+    <string name="details_synopsis_title">Synopsis</string>
+    <string name="details_no_synopsis">No synopsis is available for this movie.</string>
+    <string name="details_rating_title">TMDb rating</string>
+    <string name="details_not_rated">Not rated yet</string>
+    <string name="details_rating_description">Rated %1$s out of 10, %2$s</string>
+    <plurals name="details_votes">
+        <item quantity="one">%1$s vote</item>
+        <item quantity="other">%1$s votes</item>
+    </plurals>
+    <string name="details_runtime_hours_minutes">%1$d h %2$d min</string>
+    <string name="details_runtime_hours">%1$d h</string>
+    <string name="details_runtime_minutes">%1$d min</string>
+    <string name="details_status_rumored">Rumored</string>
+    <string name="details_status_planned">Planned</string>
+    <string name="details_status_in_production">In production</string>
+    <string name="details_status_post_production">In post-production</string>
+    <string name="details_status_canceled">Canceled</string>
 
     <!-- Errors (one per DomainError) -->
     <string name="error_no_internet">No internet connection. Check your connection and try again.</string>

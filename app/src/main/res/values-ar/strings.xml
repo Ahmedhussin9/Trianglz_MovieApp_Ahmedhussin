@@ -15,9 +15,32 @@
     <string name="movies_empty_message">يُرجى المحاولة لاحقًا.</string>
     <string name="movies_cached_notice">تعذّر التحديث. يتم عرض الأفلام المحفوظة.</string>
 
-    <!-- Navigation-shell stub (T0.9); removed when the real Details screen lands in T2.4 -->
-    <string name="placeholder_details_title">الفيلم رقم %1$d</string>
     <string name="rating_content_description">التقييم %1$s من 10</string>
+
+    <!-- Movie details -->
+    <string name="action_read_more">اقرأ المزيد</string>
+    <string name="action_show_less">عرض أقل</string>
+    <string name="details_synopsis_title">القصة</string>
+    <string name="details_no_synopsis">لا يتوفر ملخص لهذا الفيلم.</string>
+    <string name="details_rating_title">تقييم TMDb</string>
+    <string name="details_not_rated">لم يُقيَّم بعد</string>
+    <string name="details_rating_description">التقييم %1$s من 10، %2$s</string>
+    <plurals name="details_votes">
+        <item quantity="zero">%1$s صوت</item>
+        <item quantity="one">صوت واحد</item>
+        <item quantity="two">صوتان</item>
+        <item quantity="few">%1$s أصوات</item>
+        <item quantity="many">%1$s صوتًا</item>
+        <item quantity="other">%1$s صوت</item>
+    </plurals>
+    <string name="details_runtime_hours_minutes">%1$d س %2$d د</string>
+    <string name="details_runtime_hours">%1$d س</string>
+    <string name="details_runtime_minutes">%1$d د</string>
+    <string name="details_status_rumored">مُشاع</string>
+    <string name="details_status_planned">مُخطَّط له</string>
+    <string name="details_status_in_production">قيد الإنتاج</string>
+    <string name="details_status_post_production">في مرحلة ما بعد الإنتاج</string>
+    <string name="details_status_canceled">أُلغي</string>
 
     <!-- Errors (one per DomainError) -->
     <string name="error_no_internet">لا يوجد اتصال بالإنترنت. تحقّق من اتصالك وحاول مرة أخرى.</string>

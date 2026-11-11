@@ -7,7 +7,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.trianglz_task_ahmedhussin.feature.details.presentation.DetailsScreen
+import com.trianglz_task_ahmedhussin.feature.details.presentation.MovieDetailsRoute
 import com.trianglz_task_ahmedhussin.feature.movies.presentation.MoviesRoute
 
 /**
@@ -37,9 +37,10 @@ fun AppNavigation(modifier: Modifier = Modifier) {
                 MoviesRoute(onMovieClick = { movieId -> backStack.add(DetailsRoute(movieId)) })
             }
             entry<DetailsRoute> { route ->
-                DetailsScreen(
+                MovieDetailsRoute(
                     movieId = route.movieId,
-                    onBack = { backStack.removeLastOrNull() },
+                    // Removes this entry only: a double-tapped Back can never pop the list as well.
+                    onBack = { backStack.remove(route) },
                 )
             }
         },

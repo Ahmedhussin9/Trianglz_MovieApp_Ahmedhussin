@@ -5,8 +5,8 @@
 | | |
 |---|---|
 | **Current phase** | Phase 2: Movie details (Phase 0 and Phase 1 complete) |
-| **Last completed task** | T2.3: Presentation, DetailsViewModel (awaiting the user's check) |
-| **Next task** | T2.4: UI, Details screen |
+| **Last completed task** | T2.4: UI, Details screen (awaiting the user's check) |
+| **Next task** | T2.5: UI test, list to details navigation |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -145,7 +145,7 @@ sequenceDiagram
         ├── data/                  remote (DetailsApi, DTO), local (MovieDetailsEntity, DAO), mapper, repository
         ├── domain/                MovieDetails, MovieDetailsRepository, GetMovieDetailsUseCase
         ├── presentation/          DetailsViewModel, DetailsUiState, DetailsUiAction, DetailsEffect, DetailsScreen
-        │   └── component/         BackdropHeader, RatingRing, GenreChips, Synopsis, InfoRow
+        │   └── component/         DetailsHeader, DetailsTopBar, InfoRow, GenreChips, RatingSection, Synopsis
         └── di/                    DetailsModule
 ```
 
@@ -290,7 +290,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 - [x] **T2.1 Domain: details.** Add the `MovieDetails` model (with `Genre` and the `ReleaseStatus` enum), the `MovieDetailsRepository` interface (`fun movieDetails(id): Flow<AppResult<MovieDetails>>`, which emits the cached value first, then the network outcome, then completes) and `GetMovieDetailsUseCase` (non-positive IDs fail as `NotFound`). *Test:* use-case unit tests. **Covers:** R6, R16, R27
 - [x] **T2.2 Data: details plus cache.** Add `/movie/{id}`, the DTO, `MovieDetailsEntity` (genres as JSON and the release date as ISO text, through type converters; database version 2), the DAO, mappers with validation, and a cache-then-network repository: emit the cached row, fetch, save to the database, and emit again. On failure with a cache, keep the cached data and emit the error as a non-blocking signal. Shared TMDb value validation (rating clamp, strict `java.time` date parsing) moves to `core/network/TmdbValues.kt` and replaces the T1.2 regex. *Test:* MockWebServer tests, repository tests with a fake DAO for both cache-hit and cache-miss paths, a 404 mapping to `NotFound`, and an instrumented DAO test for the converters. **Covers:** R6, R7, R22, R28, R38
 - [x] **T2.3 Presentation: DetailsViewModel.** Receive the movie ID from `DetailsRoute` through assisted injection (`@HiltViewModel(assistedFactory = …)`). Add `DetailsUiState` with `status`, `isRefreshing` and `isSynopsisExpanded`, the actions, the effects, and `MovieDetailsUi` with locale-aware formatting. *Test:* ViewModel tests for loading → content, cached → refreshed, error → retry → content, and toggling the synopsis. **Covers:** R6, R17, R21, R29
-- [ ] **T2.4 UI: Details screen.** Add the backdrop hero, the overlapping poster, the info row, genre chips, `RatingRing`, the expandable synopsis, the four states, and animations A2, A4, A6, A7 and A8. Add previews (light, dark, RTL). *Test:* checked on a device with online, offline-with-cache and offline-without-cache. **Covers:** R6, R32, R33
+- [x] **T2.4 UI: Details screen.** Add the backdrop hero, the overlapping poster, the info row, genre chips, `RatingRing`, the expandable synopsis, the four states, and animations A2, A4, A6, A7 and A8. Add previews (light, dark, RTL). *Test:* checked on a device with online, offline-with-cache and offline-without-cache, plus Compose UI tests for the stateless screen (`DetailsScreenTest`). **Covers:** R6, R32, R33
 - [ ] **T2.5 UI test: list to details navigation.** A Hilt instrumented test with a fake repository: tap a card, then the details title is shown, then Back returns to the list. **Covers:** R5, R30
 
 ### Phase 3: Search

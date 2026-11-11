@@ -63,6 +63,7 @@ class MovieDetailsUiTest {
         val ui = details.toUi(Locale.US)
 
         assertEquals(details.runtimeMinutes, ui.runtimeMinutes)
+        assertEquals(details.voteCount, ui.voteCount)
         assertEquals(details.status, ui.status)
         assertEquals(details.genres, ui.genres)
     }
