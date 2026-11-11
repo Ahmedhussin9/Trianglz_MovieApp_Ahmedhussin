@@ -143,6 +143,8 @@ class MoviesScreenTest {
                 MoviesScreen(
                     state = state,
                     movies = pagingFlow.collectAsLazyPagingItems(),
+                    // Not searching in these tests, so the results list is never shown.
+                    searchResults = flowOf(PagingData.empty<MovieUi>()).collectAsLazyPagingItems(),
                     onAction = { actions += it },
                 )
             }

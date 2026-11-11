@@ -22,6 +22,12 @@
     <string name="settings_language_english" translatable="false">English</string>
     <string name="settings_language_arabic" translatable="false">العربية</string>
 
+    <!-- Search -->
+    <string name="search_hint">Search movies</string>
+    <string name="action_clear_search">Clear search</string>
+    <string name="search_empty_title">No results for “%1$s”</string>
+    <string name="search_empty_message">Check the spelling or try another title.</string>
+
     <!-- Movies list -->
     <string name="movies_empty_title">No movies to show</string>
     <string name="movies_empty_message">Please check back later.</string>
