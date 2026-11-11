@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| **Current phase** | Phase 1: Movies list (Phase 0 complete) |
-| **Last completed task** | T1.5: UI, Movies screen (T1.4 + T1.5 awaiting the user's cycle check) |
-| **Next task** | T1.6: UI tests, Movies screen |
+| **Current phase** | Phase 1: Movies list, all tasks done (Phase 1 PR next) |
+| **Last completed task** | T1.6: UI tests, Movies screen (awaiting the user's check) |
+| **Next task** | Phase 1 PR into `develop`, then T2.1: Domain, details |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -283,7 +283,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
   **Covers:** R3, R7, R8, R9, R10, R38, R28
 - [x] **T1.4 Presentation: MoviesViewModel (list part).** Add `MoviesUiState`, `MoviesUiAction`, `MoviesEffect`, `onAction()`, the `movies` flow with `cachedIn(viewModelScope)`, the `MovieClicked` → `NavigateToDetails` effect, and the pure `LoadStates → ListStatus` mapper. *Test:* ViewModel tests with Turbine, plus mapper tests covering all four states and the "cached plus failed refresh" banner case. **Covers:** R17, R15, R21, R29
 - [x] **T1.5 UI: Movies screen.** Add the adaptive grid, `PosterCard` (title, poster, year and rating pill), the `PagingFooter` (loading, and error with Retry), the full-screen Loading, Empty and Error states, the "Showing saved movies" banner, and animations A1, A2, A4 and A9. Add previews. *Test:* checked on a device in airplane mode with and without cache. **Covers:** R2, R4, R9, R10, R32, R33
-- [ ] **T1.6 UI tests: Movies screen.** Compose tests on the stateless screen with fake `PagingData` covering the Content, Empty and Error states, the footer Retry calling `onAction(Retry)`, and a card click sending `MovieClicked`. **Covers:** R30
+- [x] **T1.6 UI tests: Movies screen.** Compose tests on the stateless screen with fake `PagingData` covering the Loading, Content, Empty and Error states, the footer error, the cached-data notice and its Dismiss, and a card click sending `MovieClicked`. Retry calls `LazyPagingItems.retry()` directly (T1.5), so it is tested by its effect: a `PagingSource` that fails once loads the movies after Retry. **Covers:** R4, R30
 
 ### Phase 2: Movie details
 
