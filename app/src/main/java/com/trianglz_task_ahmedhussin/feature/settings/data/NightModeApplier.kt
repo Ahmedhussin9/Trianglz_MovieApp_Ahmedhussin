@@ -16,6 +16,7 @@ object NightModeApplier {
     }
 }
 
+/** [ThemeMode.System] follows the device; the others force light or dark. */
 internal fun ThemeMode.toNightMode(): Int = when (this) {
     ThemeMode.System -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     ThemeMode.Light -> AppCompatDelegate.MODE_NIGHT_NO

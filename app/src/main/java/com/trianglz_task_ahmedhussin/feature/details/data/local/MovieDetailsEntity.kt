@@ -34,5 +34,6 @@ data class MovieDetailsEntity(
     val status: String,
 )
 
+/** A genre as stored inside [MovieDetailsEntity]'s JSON column. */
 @Serializable
 data class CachedGenre(val id: Int, val name: String)

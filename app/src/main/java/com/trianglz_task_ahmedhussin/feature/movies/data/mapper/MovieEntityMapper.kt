@@ -13,6 +13,7 @@ fun Movie.toEntity(position: Int) = MovieEntity(
     position = position,
 )
 
+/** Reads a cached row back as the domain model shown in the list. */
 fun MovieEntity.toDomain() = Movie(
     id = id,
     title = title,

@@ -24,6 +24,7 @@ data class MoviesUiState(
     val isCachedNoticeDismissed: Boolean = false,
 )
 
+/** What the user can do on the Movies screen. */
 sealed interface MoviesUiAction {
     data class MovieClicked(val movieId: Int) : MoviesUiAction
     data object DismissCachedNotice : MoviesUiAction
@@ -37,6 +38,7 @@ sealed interface MoviesUiAction {
     data object ClearQuery : MoviesUiAction
 }
 
+/** One-time navigation events from the Movies screen. */
 sealed interface MoviesEffect {
     data class NavigateToDetails(val movieId: Int) : MoviesEffect
     data object NavigateToSettings : MoviesEffect

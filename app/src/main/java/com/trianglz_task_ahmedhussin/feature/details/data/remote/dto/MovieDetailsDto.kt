@@ -26,6 +26,7 @@ data class MovieDetailsDto(
     @SerialName("status") val status: String? = null,
 )
 
+/** A genre as returned inside `/movie/{movie_id}`; validated by the mapper. */
 @Serializable
 data class GenreDto(
     @SerialName("id") val id: Int? = null,

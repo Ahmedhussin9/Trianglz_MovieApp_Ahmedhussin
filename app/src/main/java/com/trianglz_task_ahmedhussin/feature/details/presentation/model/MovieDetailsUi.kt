@@ -41,6 +41,7 @@ data class MovieDetailsUi(
     val status: ReleaseStatus,
 )
 
+/** Formats [MovieDetails] for display in [locale]; see [MovieDetailsUi] for what each field holds. */
 fun MovieDetails.toUi(locale: Locale): MovieDetailsUi {
     val hasVotes = voteCount > 0 && rating > 0.0
     return MovieDetailsUi(

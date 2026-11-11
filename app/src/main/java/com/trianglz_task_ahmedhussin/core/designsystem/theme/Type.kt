@@ -27,6 +27,7 @@ private val Inter = FontFamily(
 
 private val Baseline = Typography()
 
+/** Outfit for display, headline and title styles; Inter for body and label styles. */
 internal val MovieTypography = Typography(
     displayLarge = Baseline.displayLarge.copy(fontFamily = Outfit, fontWeight = FontWeight.Bold),
     displayMedium = Baseline.displayMedium.copy(fontFamily = Outfit, fontWeight = FontWeight.Bold),

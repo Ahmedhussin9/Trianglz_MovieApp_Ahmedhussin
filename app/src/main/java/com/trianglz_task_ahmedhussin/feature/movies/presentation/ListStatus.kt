@@ -54,6 +54,7 @@ fun CombinedLoadStates.toListStatus(itemCount: Int): ListStatus {
     }
 }
 
+/** The footer only reflects the next page (append); the list area itself uses [toListStatus]. */
 fun CombinedLoadStates.toFooterStatus(): FooterStatus = when (val state = append) {
     is LoadState.Loading -> FooterStatus.Loading
     is LoadState.Error -> FooterStatus.Error(state.domainError())

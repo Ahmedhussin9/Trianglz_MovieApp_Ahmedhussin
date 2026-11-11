@@ -23,6 +23,7 @@ fun MovieDetails.toEntity() = MovieDetailsEntity(
     status = status.name,
 )
 
+/** An unknown stored status (for example after renaming an enum entry) becomes `Unknown`. */
 fun MovieDetailsEntity.toDomain() = MovieDetails(
     id = id,
     title = title,

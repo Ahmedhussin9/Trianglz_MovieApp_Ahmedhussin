@@ -10,6 +10,7 @@ import com.trianglz_task_ahmedhussin.feature.details.presentation.model.MovieDet
  *   Effect = DetailsEffect   (one-time events, delivered once through a Channel)
  */
 
+/** Everything the Details screen renders, as one immutable value. */
 data class DetailsUiState(
     val status: DetailsStatus = DetailsStatus.Loading,
     /** Cached details are on screen while the network refresh is still running. */
@@ -24,6 +25,7 @@ sealed interface DetailsStatus {
     data class Error(val error: DomainError) : DetailsStatus
 }
 
+/** What the user can do on the Details screen. */
 sealed interface DetailsUiAction {
     /** Loads again: from the full-screen error, or from the refresh-failed snackbar. */
     data object Retry : DetailsUiAction
@@ -31,6 +33,7 @@ sealed interface DetailsUiAction {
     data object ToggleSynopsis : DetailsUiAction
 }
 
+/** One-time events for the Details screen: navigation and snackbars. */
 sealed interface DetailsEffect {
     data object NavigateBack : DetailsEffect
 
