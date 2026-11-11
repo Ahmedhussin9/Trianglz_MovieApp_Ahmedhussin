@@ -26,13 +26,8 @@ class MoviesRepositoryImpl @Inject constructor(
 
     @OptIn(ExperimentalPagingApi::class)
     override fun popularMovies(): Flow<PagingData<Movie>> = Pager(
-        config = PagingConfig(pageSize = TMDB_PAGE_SIZE, enablePlaceholders = false),
+        config = PagingConfig(pageSize = MoviesRemoteDataSource.PAGE_SIZE, enablePlaceholders = false),
         remoteMediator = MoviesRemoteMediator(dataSource, database),
         pagingSourceFactory = { database.movieDao().pagingSource() },
     ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
-
-    private companion object {
-        /** TMDb list endpoints always return 20 items per page. */
-        const val TMDB_PAGE_SIZE = 20
-    }
 }

@@ -118,6 +118,41 @@ class MoviesRemoteDataSourceTest {
         assertEquals(DomainError.Unknown, failureOf { dataSource.discoverMovies(page = 1) })
     }
 
+    @Test
+    fun `search requests the search endpoint with the query, page and the required filters`() = runTest {
+        enqueueJson(page(page = 2, totalPages = 4))
+
+        dataSource.searchMovies(query = "spider man", page = 2)
+
+        val url = server.takeRequest().url
+        assertEquals("/3/search/movie", url.encodedPath)
+        assertEquals("spider man", url.queryParameter("query"))
+        assertEquals("2", url.queryParameter("page"))
+        assertEquals("false", url.queryParameter("include_adult"))
+        assertEquals("US", url.queryParameter("certification_country"))
+        assertEquals("PG-13", url.queryParameter("certification.lte"))
+    }
+
+    @Test
+    fun `search results are validated like the list`() = runTest {
+        enqueueJson(page(page = 1, totalPages = 1, movies = """{"id":1,"title":"Coco"},{"id":0,"title":"Bad id"},{"title":"No id"},{"id":2,"title":"  "}"""))
+
+        val result = dataSource.searchMovies(query = "coco", page = 1)
+
+        assertEquals(listOf(1), result.movies.map { it.id })
+        assertTrue(result.isLastPage)
+    }
+
+    @Test
+    fun `search with no matches is an empty last page`() = runTest {
+        enqueueJson("""{"page":1,"results":[],"total_pages":0,"total_results":0}""")
+
+        val result = dataSource.searchMovies(query = "zzzzzz", page = 1)
+
+        assertTrue(result.movies.isEmpty())
+        assertTrue(result.isLastPage)
+    }
+
     private suspend fun failureOf(block: suspend () -> Unit): DomainError {
         try {
             block()
