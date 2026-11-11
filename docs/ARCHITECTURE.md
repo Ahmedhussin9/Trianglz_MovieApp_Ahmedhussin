@@ -1,6 +1,11 @@
 # Architecture
 
-This document explains how the Movie App is structured and how data moves through it. It covers the current state of the code; the reasons behind the main choices are recorded as decision records in [`docs/adr/`](adr/README.md), and every task's details are in [`docs/features/`](features/).
+This document explains how the Movie App is structured and how data moves through it. It covers the current state of the code. Related documents:
+- [`WALKTHROUGHS.md`](WALKTHROUGHS.md): every main scenario traced class by class at run time.
+- [`TESTING.md`](TESTING.md): the testing strategy and every test class.
+- [`FAQ.md`](FAQ.md): design questions and answers, including known limitations.
+- [`adr/`](adr/README.md): the reasons behind the main decisions.
+- [`features/`](features/): how each task was built, step by step.
 
 ## 1. Overview
 
@@ -186,7 +191,7 @@ Navigation 3 ([ADR 0007](adr/0007-navigation-3.md)). The back stack is a saveabl
 | Unit (JVM), 181 tests | `app/src/test` | Mappers and validation; error mapping; interceptors and APIs against MockWebServer; RemoteMediator and paging sources; repositories with fakes; use cases; ViewModels in virtual time (Turbine); settings storage |
 | Instrumented, 57 tests | `app/src/androidTest` | Room DAOs and the RemoteMediator on real SQLite; Compose UI tests for the list, search, details and the status layout; the production Hilt graph; end-to-end navigation with fake repositories |
 
-Run them with `gradlew.bat testDebugUnitTest` and `gradlew.bat connectedDebugAndroidTest`.
+Run them with `gradlew.bat testDebugUnitTest` and `gradlew.bat connectedDebugAndroidTest`. Details, tools and the full list of test classes are in [`TESTING.md`](TESTING.md).
 
 ## 10. Decision records
 

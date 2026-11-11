@@ -9,7 +9,7 @@ The task requires a local cache with a specific flow (R7–R10): show cached dat
 **Popular list:**
 - Room is the single source of truth, and Paging 3's `RemoteMediator` keeps it filled.
 - The screen reads a Room `PagingSource` only.
-- `MoviesRemoteMediator` refreshes page 1 on start (`LAUNCH_INITIAL_REFRESH`), replaces the cached pages in one transaction, and appends further pages as the user scrolls. Page keys are kept in a `remote_keys` table.
+- `MoviesRemoteMediator` refreshes page 1 on start (`LAUNCH_INITIAL_REFRESH`), replaces the cached pages in one transaction, and appends further pages as the user scrolls. The next page to load is kept in one `remote_keys` row for the list, so scrolling resumes from the right page even after the app restarts.
 - Room invalidates the `PagingSource` whenever the tables change, so fresh data reaches the screen without extra code (R10).
 
 **Details:**

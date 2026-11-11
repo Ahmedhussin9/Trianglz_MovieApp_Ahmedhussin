@@ -19,6 +19,10 @@ The documentation that explains the codebase as a whole (R34, R35, R40, R46, R18
 |------|------|--------|
 | Docs | `docs/ARCHITECTURE.md` | New |
 | Docs | `docs/adr/README.md`, `0001`–`0008` | New |
+| Docs | `docs/WALKTHROUGHS.md` | New: 12 scenarios traced class by class (start-up, cache, paging, details, every Retry, search, language, theme, back, rotation and process death, one request end to end) |
+| Docs | `docs/TESTING.md` | New: strategy, tools, every test class with what it proves, patterns, bugs caught, what is not automated |
+| Docs | `docs/FAQ.md` | New: design questions and answers for reviewers, with known limitations |
+| Code (comment fix) | `feature/movies/data/local/RemoteKeyDao.kt` | The KDoc said "one row per movie"; it is one row per list (found while writing the walkthroughs) |
 | Code (comments only) | 27 declarations across `core/` and `feature/*` (DAOs, `DatabaseModule`, `Color.kt`, `Type.kt`, contracts, mappers, use cases, `ListStatus.kt`, `NightModeApplier.kt`) | KDoc added |
 | Docs | `docs/PLAN.md` | T4.2 ticked |
 

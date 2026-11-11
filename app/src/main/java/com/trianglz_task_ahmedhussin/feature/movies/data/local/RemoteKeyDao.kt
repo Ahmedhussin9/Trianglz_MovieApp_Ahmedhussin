@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 
-/** Paging keys of the cached popular list, one row per movie (see `MoviesRemoteMediator`). */
+/** Where each cached list continues paging from: one row per list, holding its next TMDb page (see `MoviesRemoteMediator`). */
 @Dao
 interface RemoteKeyDao {
 
