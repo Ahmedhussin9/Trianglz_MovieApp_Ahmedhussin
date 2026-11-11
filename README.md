@@ -63,6 +63,7 @@ The full picture and the reasons behind each choice:
 | [FAQ](docs/FAQ.md) | Design questions and answers, known limitations |
 | [Feature docs](docs/features/) | How each task was built, step by step (29 documents) |
 | [Requirements](docs/requirements.md) and [plan](docs/PLAN.md) | The task's requirements (numbered) and the delivery plan with coverage |
+| [AI usage](docs/AI_USAGE.md) | How Claude Code was used, what was checked by hand, and the limits |
 
 ## Tech stack
 
