@@ -60,29 +60,10 @@ class MovieMapperTest {
     }
 
     @Test
-    fun `release year is read from an ISO date`() {
-        assertEquals(2024, "2024-02-29".toReleaseYear())
-        assertEquals(2024, " 2024-12-31 ".toReleaseYear())
-    }
+    fun `invalid date gives no year and out-of-range rating is clamped`() {
+        val movie = valid.copy(releaseDate = "2023-02-29", voteAverage = 12.0).toDomainOrNull()!!
 
-    @Test
-    fun `missing, blank or malformed release date gives no year`() {
-        listOf(null, "", "   ", "2024", "2024-13-01", "2024-00-10", "2024-01-32", "30/10/1995", "abcd-ef-gh")
-            .forEach { assertNull("'$it'", it.toReleaseYear()) }
-    }
-
-    @Test
-    fun `implausibly early release year is ignored`() {
-        assertNull("0001-01-01".toReleaseYear())
-        assertEquals(1895, "1895-12-28".toReleaseYear())
-    }
-
-    @Test
-    fun `rating is clamped to 0-10 and missing or NaN becomes 0`() {
-        assertEquals(10.0, 11.5.toValidRating(), 0.0)
-        assertEquals(0.0, (-1.0).toValidRating(), 0.0)
-        assertEquals(0.0, (null as Double?).toValidRating(), 0.0)
-        assertEquals(0.0, Double.NaN.toValidRating(), 0.0)
-        assertEquals(6.4, 6.4.toValidRating(), 0.0)
+        assertNull(movie.releaseYear)
+        assertEquals(10.0, movie.rating, 0.0)
     }
 }

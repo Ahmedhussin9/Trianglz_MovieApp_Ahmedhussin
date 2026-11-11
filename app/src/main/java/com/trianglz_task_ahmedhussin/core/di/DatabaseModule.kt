@@ -3,6 +3,7 @@ package com.trianglz_task_ahmedhussin.core.di
 import android.content.Context
 import androidx.room.Room
 import com.trianglz_task_ahmedhussin.core.database.MovieDatabase
+import com.trianglz_task_ahmedhussin.feature.details.data.local.MovieDetailsDao
 import com.trianglz_task_ahmedhussin.feature.movies.data.local.MovieDao
 import com.trianglz_task_ahmedhussin.feature.movies.data.local.RemoteKeyDao
 import dagger.Module
@@ -32,4 +33,7 @@ object DatabaseModule {
 
     @Provides
     fun provideRemoteKeyDao(database: MovieDatabase): RemoteKeyDao = database.remoteKeyDao()
+
+    @Provides
+    fun provideMovieDetailsDao(database: MovieDatabase): MovieDetailsDao = database.movieDetailsDao()
 }
