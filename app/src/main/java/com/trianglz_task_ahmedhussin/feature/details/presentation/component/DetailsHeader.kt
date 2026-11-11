@@ -6,13 +6,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -66,15 +71,20 @@ fun DetailsHeader(
     Box(modifier = modifier.fillMaxWidth()) {
         Backdrop(url = backdropUrl, scrollState = scrollState)
         Row(
-            modifier = Modifier.padding(start = Spacing.lg, end = Spacing.lg, top = BackdropHeight - PosterOverlap),
-            verticalAlignment = Alignment.Bottom,
+            modifier = Modifier
+                // The backdrop goes edge to edge, but text and poster stay clear of a side navigation bar.
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+                .padding(start = Spacing.lg, end = Spacing.lg, top = BackdropHeight - PosterOverlap),
             horizontalArrangement = Arrangement.spacedBy(Spacing.lg),
         ) {
             Poster(url = posterUrl, modifier = Modifier.width(PosterWidth))
+            // The title starts below the backdrop and grows downwards. Aligned to the poster's
+            // bottom instead, a long title or large font size pushed it up over the image, where
+            // dark text on a dark backdrop was unreadable (found in the T4.1 font-scale check).
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(bottom = Spacing.xs),
+                    .padding(top = PosterOverlap + Spacing.md),
                 verticalArrangement = Arrangement.spacedBy(Spacing.xs),
             ) {
                 Text(

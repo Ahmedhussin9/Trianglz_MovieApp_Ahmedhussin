@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| **Current phase** | Phase 3: Search, all tasks done (Phase 3 PR next) |
-| **Last completed task** | T3.5: UI test, search |
-| **Next task** | Phase 3 PR into `develop`, then T4.1: Error and validation review |
+| **Current phase** | Phase 4: Quality, documentation and delivery |
+| **Last completed task** | T4.1: Error and validation review (awaiting the user's check) |
+| **Next task** | T4.2: Code and architecture documentation |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -309,7 +309,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 
 ### Phase 4: Quality, documentation and delivery
 
-- [ ] **T4.1 Error and validation review.** Go through every `DomainError` on every screen on a device (airplane mode, bad token → 401, slow network) and fix the gaps. Check accessibility basics: content descriptions, touch targets, font scaling. Open item from Phase 3: with the app in Arabic (Egypt/Saudi) on a phone set to English, a physical Android 13+ phone shows Latin digits while the emulator shows Arabic-Indic; check whether the details screen still mixes styles after the `MainActivity` locale sync. *Test:* a manual checklist in the feature doc. **Covers:** R21, R22, R32, R36, R37
+- [x] **T4.1 Error and validation review.** Go through every `DomainError` on every screen on a device (airplane mode, bad token → 401, slow network) and fix the gaps. Check accessibility basics: content descriptions, touch targets, font scaling. Open item from Phase 3: with the app in Arabic (Egypt/Saudi) on a phone set to English, a physical Android 13+ phone shows Latin digits while the emulator shows Arabic-Indic; check whether the details screen still mixes styles after the `MainActivity` locale sync. *Test:* a manual checklist in the feature doc. **Covers:** R21, R22, R32, R36, R37 *Result:* four layout defects found and fixed (details title over the backdrop with large text, unscrollable error/empty states in landscape, missing side insets on the Movies and details screens); the digit-style item stays open (see `docs/features/28-quality-review.md`).
 - [ ] **T4.2 Code and architecture documentation.** Run a KDoc pass on public APIs. Write `docs/ARCHITECTURE.md` (layers, data flow, the cache flow, how the names map to MVI) and `docs/adr/` with records for MVI naming, `PagingData` outside `UiState`, `RemoteMediator` vs a manual cache, the certification-filter limitation on search, single module vs multi-module, **package by feature vs package by layer** (with the comparison table from T1.2), and Navigation 3. **Covers:** R34, R35, R40, R46, R18
 - [ ] **T4.3 README.** Cover the overview, feature list, tech stack, architecture summary (linking to the docs), the TMDb token setup, how to run the app and the tests, and the known limitations. **Covers:** R44, R45, R40
 - [ ] **T4.4 AI usage document.** Write `docs/AI_USAGE.md`: how AI was used (CLAUDE.md rules, requirement extraction, planning, task-by-task work with human review, and verification on a device), what was checked by hand, and its limits. **Covers:** R39
