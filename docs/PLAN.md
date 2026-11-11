@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| **Current phase** | Phase 2: Movie details (Phase 0 and Phase 1 complete) |
-| **Last completed task** | T2.6: Settings, language and theme (awaiting the user's check) |
-| **Next task** | T2.5: UI test, list to details navigation |
+| **Current phase** | Phase 2: Movie details, all tasks done (Phase 2 PR next) |
+| **Last completed task** | T2.5: UI test, list to details navigation |
+| **Next task** | Phase 2 PR into `develop`, then T3.1: Domain, search |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -296,7 +296,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 - [x] **T2.2 Data: details plus cache.** Add `/movie/{id}`, the DTO, `MovieDetailsEntity` (genres as JSON and the release date as ISO text, through type converters; database version 2), the DAO, mappers with validation, and a cache-then-network repository: emit the cached row, fetch, save to the database, and emit again. On failure with a cache, keep the cached data and emit the error as a non-blocking signal. Shared TMDb value validation (rating clamp, strict `java.time` date parsing) moves to `core/network/TmdbValues.kt` and replaces the T1.2 regex. *Test:* MockWebServer tests, repository tests with a fake DAO for both cache-hit and cache-miss paths, a 404 mapping to `NotFound`, and an instrumented DAO test for the converters. **Covers:** R6, R7, R22, R28, R38
 - [x] **T2.3 Presentation: DetailsViewModel.** Receive the movie ID from `DetailsRoute` through assisted injection (`@HiltViewModel(assistedFactory = …)`). Add `DetailsUiState` with `status`, `isRefreshing` and `isSynopsisExpanded`, the actions, the effects, and `MovieDetailsUi` with locale-aware formatting. *Test:* ViewModel tests for loading → content, cached → refreshed, error → retry → content, and toggling the synopsis. **Covers:** R6, R17, R21, R29
 - [x] **T2.4 UI: Details screen.** Add the backdrop hero, the overlapping poster, the info row, genre chips, `RatingRing`, the expandable synopsis, the four states, and animations A2, A4, A6, A7 and A8. Add previews (light, dark, RTL). *Test:* checked on a device with online, offline-with-cache and offline-without-cache, plus Compose UI tests for the stateless screen (`DetailsScreenTest`). **Covers:** R6, R32, R33
-- [ ] **T2.5 UI test: list to details navigation.** A Hilt instrumented test with a fake repository: tap a card, then the details title is shown, then Back returns to the list. **Covers:** R5, R30
+- [x] **T2.5 UI test: list to details navigation.** A Hilt instrumented test with fake repositories (swapped in for this class only with `@UninstallModules` and a nested module): tap a card, then the details are shown, then Back (button and system back) returns to the list, and each movie opens its own details. **Covers:** R5, R30
 - [x] **T2.6 Settings: language and theme** (extras E1 + E2, pulled forward at the user's request so every later task can be checked in Arabic and English, light and dark; done before T2.5). A Settings screen opened from the Movies top bar, with Language (System / English / العربية) through AndroidX per-app locales, and Theme (System / Light / Dark) stored in DataStore and applied with AppCompat night mode. The movie list is fetched again after a language switch (Q14). Numbers, years and dates use the locale's digits. *Test:* unit tests for the ViewModel, the DataStore source and the mappings; checked on a device (Arabic RTL, light and dark, choices kept after an app restart). **Covers:** R32, R33 (E1, E2)
 
 ### Phase 3: Search
