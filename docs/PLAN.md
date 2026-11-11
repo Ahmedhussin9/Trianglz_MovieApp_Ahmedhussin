@@ -5,8 +5,8 @@
 | | |
 |---|---|
 | **Current phase** | Phase 3: Search (Phases 0–2 complete) |
-| **Last completed task** | T3.2: Data, search PagingSource |
-| **Next task** | T3.3: Presentation, search in MoviesViewModel |
+| **Last completed task** | T3.3: Presentation, search in MoviesViewModel |
+| **Next task** | T3.4: UI, search bar |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -165,13 +165,13 @@ sequenceDiagram
 | Field | Type | Meaning |
 |-------|------|---------|
 | `query` | `String` | Current text in the search bar (what the user typed). |
-| `isSearching` | `Boolean` | `true` when the trimmed query is not blank, so the search results are shown instead of the list. |
+| `isSearching` | `Boolean` | `true` once the debounced, validated query is not blank, so the search results are shown instead of the list. It follows the debounced query (not each keystroke), so the list stays visible while the user is still typing; clearing switches back at once. |
 | `movies` | `Flow<PagingData<MovieUi>>` | Cached and refreshed list from the `RemoteMediator`, exposed **next to** the `StateFlow` because `PagingData` is a stream and not a value. This is documented in an ADR. |
 | `searchResults` | `Flow<PagingData<MovieUi>>` | Debounced search results (`flatMapLatest` on the query). |
 
 `MovieUi` holds: `id`, `title`, `posterUrl?`, `releaseYear?`, `ratingText`.
 
-**User actions (`MoviesUiAction`):** `QueryChanged(text)`, `ClearQuery`, `MovieClicked(id)`, `Retry`.
+**User actions (`MoviesUiAction`):** `QueryChanged(text)`, `ClearQuery`, `MovieClicked(id)`, `DismissCachedNotice`, `SettingsClicked`. Retry is not an action: the screen calls `LazyPagingItems.retry()` (T1.5).
 **Effects (`MoviesEffect`):** `NavigateToDetails(id)`, `ShowSnackbar(message)`.
 
 **States.** A tested pure function `LoadStates → ListStatus` turns Paging load states into one of the four states below, so the composable stays free of logic (R21).
@@ -303,7 +303,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 
 - [x] **T3.1 Domain: search.** Add `SearchQueryValidator` (trims the query, collapses repeated whitespace, treats blank as idle, caps the length at 100), the `MovieSearchRepository` interface, and `SearchMoviesUseCase(query): Flow<PagingData<Movie>>`. *Test:* validator and use-case unit tests. **Covers:** R12, R22, R27
 - [x] **T3.2 Data: search PagingSource.** Add `MoviesApi.searchMovies(query, page)` (`/search/movie`; the three filter parameters are still sent by the interceptor, see Q2), `SearchPagingSource` with `toDomainError()` mapping, and `MovieSearchRepositoryImpl` (`searchMovies(query)`). The source skips movies it already returned on an earlier page, since repeated IDs would crash the keyed grid. *Test:* `PagingSource` unit tests with MockWebServer for pages, empty results and errors. **Covers:** R12, R23, R24, R28
-- [ ] **T3.3 Presentation: search in MoviesViewModel.** Add the `query` `StateFlow` with `debounce(350 ms)`, `distinctUntilChanged`, `flatMapLatest` to the use case and `cachedIn`, plus `QueryChanged` and `ClearQuery`. *Test:* virtual-time tests: typing fast makes one request, clearing goes back to the list, and the same query does not trigger a new request. **Covers:** R13, R15, R17, R29
+- [x] **T3.3 Presentation: search in MoviesViewModel.** Add the `query` `StateFlow` with `debounce(350 ms)` (none when clearing), `distinctUntilChanged` on the validated query, `flatMapLatest` to the use case and `cachedIn`, plus `QueryChanged` and `ClearQuery`. *Test:* virtual-time tests: typing fast makes one request, clearing goes back to the list, and the same query does not trigger a new request. **Covers:** R13, R15, R17, R29
 - [ ] **T3.4 UI: search bar.** Add a pinned search bar at the top of the Movies screen, results in the same grid, the "No results for 'x'" empty state, and animations A3 and A5. Hide the keyboard when scrolling or submitting. *Test:* checked on a device by typing, clearing and going offline. **Covers:** R11, R12, R13, R32, R33
 - [ ] **T3.5 UI test: search.** A Compose test: typing sends `QueryChanged`, results are shown, the empty state is shown for no matches, and the clear button resets the screen. **Covers:** R13, R30
 

@@ -4,8 +4,10 @@ import androidx.paging.PagingData
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.trianglz_task_ahmedhussin.feature.movies.domain.model.Movie
+import com.trianglz_task_ahmedhussin.feature.movies.domain.repository.MovieSearchRepository
 import com.trianglz_task_ahmedhussin.feature.movies.domain.repository.MoviesRepository
 import com.trianglz_task_ahmedhussin.feature.movies.domain.usecase.GetMoviesUseCase
+import com.trianglz_task_ahmedhussin.feature.movies.domain.usecase.SearchMoviesUseCase
 import com.trianglz_task_ahmedhussin.testing.MainDispatcherRule
 import com.trianglz_task_ahmedhussin.testing.TestData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,7 +38,11 @@ class MoviesViewModelTest {
         override fun popularMovies(): Flow<PagingData<Movie>> = flowOf(PagingData.from(movies))
     }
 
-    private fun viewModel() = MoviesViewModel(GetMoviesUseCase(repository))
+    private val searchRepository = object : MovieSearchRepository {
+        override fun searchMovies(query: String): Flow<PagingData<Movie>> = flowOf(PagingData.from(emptyList()))
+    }
+
+    private fun viewModel() = MoviesViewModel(GetMoviesUseCase(repository), SearchMoviesUseCase(searchRepository))
 
     /**
      * `asSnapshot()` never completes on the `cachedIn` flow itself (it keeps waiting on the
