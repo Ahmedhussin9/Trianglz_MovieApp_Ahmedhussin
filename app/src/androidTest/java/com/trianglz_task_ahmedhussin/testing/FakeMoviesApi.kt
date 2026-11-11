@@ -34,4 +34,8 @@ class FakeMoviesApi : MoviesApi {
         failures[page]?.let { throw it }
         return responses[page] ?: error("No fake response for page $page")
     }
+
+    /** The cache tests only page the popular list; search has its own unit tests. */
+    override suspend fun searchMovies(query: String, page: Int): MoviesPageDto =
+        error("searchMovies is not used by the cache tests")
 }

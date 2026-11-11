@@ -19,6 +19,12 @@
     <string name="settings_theme_light">فاتح</string>
     <string name="settings_theme_dark">داكن</string>
 
+    <!-- Search -->
+    <string name="search_hint">ابحث عن فيلم</string>
+    <string name="action_clear_search">مسح البحث</string>
+    <string name="search_empty_title">لا توجد نتائج لـ “%1$s”</string>
+    <string name="search_empty_message">تحقّق من الإملاء أو جرّب عنوانًا آخر.</string>
+
     <!-- Movies list -->
     <string name="movies_empty_title">لا توجد أفلام لعرضها</string>
     <string name="movies_empty_message">يُرجى المحاولة لاحقًا.</string>

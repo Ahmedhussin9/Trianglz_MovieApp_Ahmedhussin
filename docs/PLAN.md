@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| **Current phase** | Phase 2: Movie details, all tasks done (Phase 2 PR next) |
-| **Last completed task** | T2.5: UI test, list to details navigation |
-| **Next task** | Phase 2 PR into `develop`, then T3.1: Domain, search |
+| **Current phase** | Phase 3: Search, all tasks done (Phase 3 PR next) |
+| **Last completed task** | T3.5: UI test, search |
+| **Next task** | Phase 3 PR into `develop`, then T4.1: Error and validation review |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -135,11 +135,11 @@ sequenceDiagram
     │   │   └── repository/        MoviesRepositoryImpl
     │   ├── domain/
     │   │   ├── model/             Movie
-    │   │   ├── repository/        MoviesRepository
+    │   │   ├── repository/        MoviesRepository, MovieSearchRepository
     │   │   └── usecase/           GetMoviesUseCase, SearchMoviesUseCase, SearchQueryValidator
     │   ├── presentation/          MoviesViewModel, MoviesUiState, MoviesUiAction, MoviesEffect,
     │   │   │                      ListStatus mapper, MoviesScreen
-    │   │   └── component/         MovieGrid, MovieSearchBar, CachedDataBanner
+    │   │   └── component/         MovieGrid, MovieCard, MovieSearchBar, CachedDataNotice, ScrollToTopButton
     │   └── di/                    MoviesModule
     ├── details/
     │   ├── data/                  remote (DetailsApi, DTO), local (MovieDetailsEntity, DAO), mapper, repository
@@ -165,13 +165,13 @@ sequenceDiagram
 | Field | Type | Meaning |
 |-------|------|---------|
 | `query` | `String` | Current text in the search bar (what the user typed). |
-| `isSearching` | `Boolean` | `true` when the trimmed query is not blank, so the search results are shown instead of the list. |
+| `isSearching` | `Boolean` | `true` once the debounced, validated query is not blank, so the search results are shown instead of the list. It follows the debounced query (not each keystroke), so the list stays visible while the user is still typing; clearing switches back at once. |
 | `movies` | `Flow<PagingData<MovieUi>>` | Cached and refreshed list from the `RemoteMediator`, exposed **next to** the `StateFlow` because `PagingData` is a stream and not a value. This is documented in an ADR. |
 | `searchResults` | `Flow<PagingData<MovieUi>>` | Debounced search results (`flatMapLatest` on the query). |
 
 `MovieUi` holds: `id`, `title`, `posterUrl?`, `releaseYear?`, `ratingText`.
 
-**User actions (`MoviesUiAction`):** `QueryChanged(text)`, `ClearQuery`, `MovieClicked(id)`, `Retry`.
+**User actions (`MoviesUiAction`):** `QueryChanged(text)`, `ClearQuery`, `MovieClicked(id)`, `DismissCachedNotice`, `SettingsClicked`. Retry is not an action: the screen calls `LazyPagingItems.retry()` (T1.5).
 **Effects (`MoviesEffect`):** `NavigateToDetails(id)`, `ShowSnackbar(message)`.
 
 **States.** A tested pure function `LoadStates → ListStatus` turns Paging load states into one of the four states below, so the composable stays free of logic (R21).
@@ -301,15 +301,15 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 
 ### Phase 3: Search
 
-- [ ] **T3.1 Domain: search.** Add `SearchQueryValidator` (trims the query, treats blank as idle, caps the length at 100) and `SearchMoviesUseCase(query): Flow<PagingData<Movie>>`. *Test:* validator and use-case unit tests. **Covers:** R12, R22, R27
-- [ ] **T3.2 Data: search PagingSource.** Add `MoviesApi.searchMovies(query, page)` (`/search/movie`; the three filter parameters are still sent by the interceptor, see Q2), `SearchPagingSource` with `toDomainError()` mapping, and `MoviesRepositoryImpl.search()`. *Test:* `PagingSource` unit tests with MockWebServer for pages, empty results and errors. **Covers:** R12, R23, R24, R28
-- [ ] **T3.3 Presentation: search in MoviesViewModel.** Add the `query` `StateFlow` with `debounce(350 ms)`, `distinctUntilChanged`, `flatMapLatest` to the use case and `cachedIn`, plus `QueryChanged` and `ClearQuery`. *Test:* virtual-time tests: typing fast makes one request, clearing goes back to the list, and the same query does not trigger a new request. **Covers:** R13, R15, R17, R29
-- [ ] **T3.4 UI: search bar.** Add a pinned search bar at the top of the Movies screen, results in the same grid, the "No results for 'x'" empty state, and animations A3 and A5. Hide the keyboard when scrolling or submitting. *Test:* checked on a device by typing, clearing and going offline. **Covers:** R11, R12, R13, R32, R33
-- [ ] **T3.5 UI test: search.** A Compose test: typing sends `QueryChanged`, results are shown, the empty state is shown for no matches, and the clear button resets the screen. **Covers:** R13, R30
+- [x] **T3.1 Domain: search.** Add `SearchQueryValidator` (trims the query, collapses repeated whitespace, treats blank as idle, caps the length at 100), the `MovieSearchRepository` interface, and `SearchMoviesUseCase(query): Flow<PagingData<Movie>>`. *Test:* validator and use-case unit tests. **Covers:** R12, R22, R27
+- [x] **T3.2 Data: search PagingSource.** Add `MoviesApi.searchMovies(query, page)` (`/search/movie`; the three filter parameters are still sent by the interceptor, see Q2), `SearchPagingSource` with `toDomainError()` mapping, and `MovieSearchRepositoryImpl` (`searchMovies(query)`). The source skips movies it already returned on an earlier page, since repeated IDs would crash the keyed grid. *Test:* `PagingSource` unit tests with MockWebServer for pages, empty results and errors. **Covers:** R12, R23, R24, R28
+- [x] **T3.3 Presentation: search in MoviesViewModel.** Add the `query` `StateFlow` with `debounce(350 ms)` (none when clearing), `distinctUntilChanged` on the validated query, `flatMapLatest` to the use case and `cachedIn`, plus `QueryChanged` and `ClearQuery`. *Test:* virtual-time tests: typing fast makes one request, clearing goes back to the list, and the same query does not trigger a new request. **Covers:** R13, R15, R17, R29
+- [x] **T3.4 UI: search bar.** Add a pinned search bar at the top of the Movies screen, results in the same grid, the "No results for 'x'" empty state, and animations A3 and A5. Hide the keyboard when scrolling or submitting. *Test:* checked on a device by typing, clearing, no results, scrolling (keyboard hides) and going offline; the Movies screen and navigation UI tests still pass. **Covers:** R11, R12, R13, R32, R33
+- [x] **T3.5 UI test: search.** A Compose test: typing sends `QueryChanged`, the clear button shows only with text and sends `ClearQuery`, results replace the popular list while searching, the empty state shows the query for no matches, Retry after a search error reloads, and tapping a result sends `MovieClicked`. **Covers:** R13, R30
 
 ### Phase 4: Quality, documentation and delivery
 
-- [ ] **T4.1 Error and validation review.** Go through every `DomainError` on every screen on a device (airplane mode, bad token → 401, slow network) and fix the gaps. Check accessibility basics: content descriptions, touch targets, font scaling. *Test:* a manual checklist in the feature doc. **Covers:** R21, R22, R32, R36, R37
+- [ ] **T4.1 Error and validation review.** Go through every `DomainError` on every screen on a device (airplane mode, bad token → 401, slow network) and fix the gaps. Check accessibility basics: content descriptions, touch targets, font scaling. Open item from Phase 3: with the app in Arabic (Egypt/Saudi) on a phone set to English, a physical Android 13+ phone shows Latin digits while the emulator shows Arabic-Indic; check whether the details screen still mixes styles after the `MainActivity` locale sync. *Test:* a manual checklist in the feature doc. **Covers:** R21, R22, R32, R36, R37
 - [ ] **T4.2 Code and architecture documentation.** Run a KDoc pass on public APIs. Write `docs/ARCHITECTURE.md` (layers, data flow, the cache flow, how the names map to MVI) and `docs/adr/` with records for MVI naming, `PagingData` outside `UiState`, `RemoteMediator` vs a manual cache, the certification-filter limitation on search, single module vs multi-module, **package by feature vs package by layer** (with the comparison table from T1.2), and Navigation 3. **Covers:** R34, R35, R40, R46, R18
 - [ ] **T4.3 README.** Cover the overview, feature list, tech stack, architecture summary (linking to the docs), the TMDb token setup, how to run the app and the tests, and the known limitations. **Covers:** R44, R45, R40
 - [ ] **T4.4 AI usage document.** Write `docs/AI_USAGE.md`: how AI was used (CLAUDE.md rules, requirement extraction, planning, task-by-task work with human review, and verification on a device), what was checked by hand, and its limits. **Covers:** R39

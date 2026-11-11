@@ -22,6 +22,7 @@ import com.trianglz_task_ahmedhussin.feature.details.domain.model.ReleaseStatus
 import com.trianglz_task_ahmedhussin.feature.details.domain.repository.MovieDetailsRepository
 import com.trianglz_task_ahmedhussin.feature.movies.di.MoviesModule
 import com.trianglz_task_ahmedhussin.feature.movies.domain.model.Movie
+import com.trianglz_task_ahmedhussin.feature.movies.domain.repository.MovieSearchRepository
 import com.trianglz_task_ahmedhussin.feature.movies.domain.repository.MoviesRepository
 import dagger.Module
 import dagger.Provides
@@ -64,6 +65,12 @@ class AppNavigationTest {
                 // Explicit load states: without them the list would stay in its initial Loading state.
                 PagingData.from(MOVIES, sourceLoadStates = LoadStates(NOT_LOADING, END_REACHED, END_REACHED)),
             )
+        }
+
+        /** Search is not exercised here (T3.5 covers it); it just has to be bound. */
+        @Provides
+        fun provideMovieSearchRepository(): MovieSearchRepository = object : MovieSearchRepository {
+            override fun searchMovies(query: String): Flow<PagingData<Movie>> = flowOf(PagingData.empty())
         }
 
         @Provides

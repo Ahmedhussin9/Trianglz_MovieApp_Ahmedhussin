@@ -8,18 +8,17 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.paging.LoadState
-import androidx.paging.LoadStates
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
-import androidx.paging.PagingState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.trianglz_task_ahmedhussin.R
 import com.trianglz_task_ahmedhussin.core.designsystem.theme.MovieAppTheme
 import com.trianglz_task_ahmedhussin.core.domain.error.DomainError
-import com.trianglz_task_ahmedhussin.core.domain.error.DomainException
 import com.trianglz_task_ahmedhussin.feature.movies.presentation.model.MovieUi
+import com.trianglz_task_ahmedhussin.testing.FailOnceThenSucceedPagingSource
+import com.trianglz_task_ahmedhussin.testing.errorState
+import com.trianglz_task_ahmedhussin.testing.loadStates
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertEquals
@@ -143,6 +142,8 @@ class MoviesScreenTest {
                 MoviesScreen(
                     state = state,
                     movies = pagingFlow.collectAsLazyPagingItems(),
+                    // Not searching in these tests, so the results list is never shown.
+                    searchResults = flowOf(PagingData.empty<MovieUi>()).collectAsLazyPagingItems(),
                     onAction = { actions += it },
                 )
             }
@@ -157,32 +158,4 @@ class MoviesScreenTest {
     )
 
     private fun string(@StringRes id: Int): String = composeRule.activity.getString(id)
-}
-
-/**
- * Always pass load states to `PagingData.from`: without them `LazyPagingItems.loadState` keeps
- * its initial refresh = Loading, and an empty list would show the skeleton instead of Empty.
- */
-private fun loadStates(
-    refresh: LoadState = LoadState.NotLoading(endOfPaginationReached = false),
-    append: LoadState = LoadState.NotLoading(endOfPaginationReached = true),
-) = LoadStates(refresh = refresh, prepend = LoadState.NotLoading(endOfPaginationReached = true), append = append)
-
-/** The data layer always wraps failures in a [DomainException], so the screen expects one. */
-private fun errorState(error: DomainError) = LoadState.Error(DomainException(error))
-
-private class FailOnceThenSucceedPagingSource(private val movies: List<MovieUi>) : PagingSource<Int, MovieUi>() {
-    var loadCount = 0
-        private set
-
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, MovieUi> {
-        loadCount++
-        return if (loadCount == 1) {
-            LoadResult.Error(DomainException(DomainError.NoInternet))
-        } else {
-            LoadResult.Page(data = movies, prevKey = null, nextKey = null)
-        }
-    }
-
-    override fun getRefreshKey(state: PagingState<Int, MovieUi>): Int? = null
 }

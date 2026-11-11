@@ -51,6 +51,7 @@ fun MovieGrid(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
     state: LazyGridState,
+    animateItems: Boolean = false,
 ) {
     // Changes only when scrolling starts or stops, so reading it here costs nothing per frame.
     val isScrolling = state.isScrollInProgress
@@ -68,14 +69,15 @@ fun MovieGrid(
             contentType = movies.itemContentType { "movie" },
         ) { index ->
             val movie = movies[index]
-            // No animateItem() here: every page cached by the RemoteMediator reloads the list
-            // from Room, and placement animations would make cards slide while scrolling.
-            // Item animations are reserved for search results (A3, T3.4).
+            // Only search results animate (A3): on the popular list every page cached by the
+            // RemoteMediator reloads the list from Room, and placement animations would make
+            // cards slide while scrolling.
             if (movie != null) {
                 MovieCard(
                     movie = movie,
                     onClick = { onMovieClick(movie.id) },
                     pressFeedbackEnabled = !isScrolling,
+                    modifier = if (animateItems) Modifier.animateItem() else Modifier,
                 )
             } else {
                 SkeletonCard()

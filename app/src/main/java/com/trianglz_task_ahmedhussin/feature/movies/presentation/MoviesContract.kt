@@ -6,12 +6,20 @@ package com.trianglz_task_ahmedhussin.feature.movies.presentation
  *   Intent = MoviesUiAction (sent through a single onAction())
  *   Effect = MoviesEffect   (one-time events, delivered once through a Channel)
  *
- * The movie list itself is a separate Flow<PagingData> on the ViewModel: PagingData is a
- * stream with its own load states, not a value that fits inside an immutable state object.
+ * The popular list and the search results are separate Flow<PagingData> on the ViewModel:
+ * PagingData is a stream with its own load states, not a value that fits inside an immutable
+ * state object.
  */
 
-/** Screen state that is not part of the paged list. */
+/** Screen state that is not part of the paged lists. */
 data class MoviesUiState(
+    /** Exactly what is in the search bar, updated on every keystroke. */
+    val query: String = "",
+    /**
+     * Search results are shown instead of the popular list. It follows the debounced, validated
+     * query, so the list stays on screen while the user is still typing.
+     */
+    val isSearching: Boolean = false,
     /** The user closed the "showing saved movies" notice for this session. */
     val isCachedNoticeDismissed: Boolean = false,
 )
@@ -20,6 +28,13 @@ sealed interface MoviesUiAction {
     data class MovieClicked(val movieId: Int) : MoviesUiAction
     data object DismissCachedNotice : MoviesUiAction
     data object SettingsClicked : MoviesUiAction
+
+    data class QueryChanged(val text: String) : MoviesUiAction {
+        /** Actions are logged; the search text is user input, so only its length is printed. */
+        override fun toString() = "QueryChanged(length=${text.length})"
+    }
+
+    data object ClearQuery : MoviesUiAction
 }
 
 sealed interface MoviesEffect {

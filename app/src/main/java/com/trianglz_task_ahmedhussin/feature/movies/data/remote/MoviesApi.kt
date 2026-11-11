@@ -22,4 +22,15 @@ interface MoviesApi {
         @Query("page") page: Int,
         @Query("sort_by") sortBy: String,
     ): MoviesPageDto
+
+    /**
+     * Title search (R12). It returns the same page shape as `/discover/movie`. The three filter
+     * parameters are sent here too (R24–R26), but TMDb applies only `include_adult` on this
+     * endpoint and ignores the certification ones (requirements Q2).
+     */
+    @GET("search/movie")
+    suspend fun searchMovies(
+        @Query("query") query: String,
+        @Query("page") page: Int,
+    ): MoviesPageDto
 }
