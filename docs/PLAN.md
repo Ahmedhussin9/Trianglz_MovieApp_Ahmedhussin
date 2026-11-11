@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| **Current phase** | Phase 1: Movies list, all tasks done (Phase 1 PR next) |
-| **Last completed task** | T1.6: UI tests, Movies screen (awaiting the user's check) |
-| **Next task** | Phase 1 PR into `develop`, then T2.1: Domain, details |
+| **Current phase** | Phase 2: Movie details (Phase 0 and Phase 1 complete) |
+| **Last completed task** | T2.1: Domain, details (awaiting the user's check) |
+| **Next task** | T2.2: Data, details plus cache |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -190,7 +190,7 @@ sequenceDiagram
 | `isRefreshing` | `Boolean` | Cached content is shown while the network refresh is still running. |
 | `synopsisExpanded` | `Boolean` | Whether the synopsis is expanded. |
 
-`MovieDetailsUi` holds: title, tagline, backdrop/poster URLs, release date, runtime, rating (0–10) and vote count, genres, synopsis, original language, and status.
+`MovieDetailsUi` holds: title, tagline, backdrop/poster URLs, release date (formatted in the user's locale), runtime, rating (0–10) and vote count, genres, synopsis, original language, and status (a translated `ReleaseStatus`).
 
 **User actions (`DetailsUiAction`):** `Retry`, `Back`, `ToggleSynopsis`.
 **Effects (`DetailsEffect`):** `NavigateBack`, `ShowSnackbar(message)`.
@@ -209,7 +209,7 @@ No design was provided, so this is a simple, clean Material 3 look with a cinema
 - **Color scheme:** generated from a warm **amber** seed (a "marquee light" feel). The primary color is amber for key actions and rating highlights. The tertiary color is deep **teal** for genre chips and accents. Neutrals are cool **slate** surfaces, so posters stand out. Dark mode uses near-black slate surfaces with toned-down amber. Contrast is checked against WCAG AA.
 - **Typography:** **Outfit** (geometric, cinematic) for display, headline and title styles, and **Inter** for body and label styles. Both are bundled as font resources and both have Arabic-compatible fallbacks.
 - **Shapes and cards:** poster cards use a 2:3 aspect ratio and 16dp rounded corners, with no border and a low tonal elevation. At the bottom there is a gradient scrim with the title (two lines maximum) and the release year. A small amber **rating pill** sits in the top-end corner. A grid adapts to 2 or more columns depending on width.
-- **Details layout:** a full-width backdrop hero that fades into the surface. The poster overlaps the hero at the start edge. Below come the title, tagline, info row (year · runtime · language), genre chips, the rating ring and the synopsis.
+- **Details layout:** a full-width backdrop hero that fades into the surface. The poster overlaps the hero at the start edge. Below come the title, tagline, info row (release date · runtime · language), genre chips, the rating ring and the synopsis.
 - **Motion:** short and subtle. Motion tokens use Material 3 easing at 200–400 ms, and motion is reduced when the system's "remove animations" setting is on.
 
 **Animations, exactly these and only these in the required work:**
@@ -287,7 +287,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 
 ### Phase 2: Movie details
 
-- [ ] **T2.1 Domain: details.** Add the `MovieDetails` model, the `MovieDetailsRepository` interface (`fun details(id): Flow<AppResult<MovieDetails>>`, which emits the cached value first and then the fresh one) and `GetMovieDetailsUseCase`. *Test:* use-case unit tests. **Covers:** R6, R16, R27
+- [x] **T2.1 Domain: details.** Add the `MovieDetails` model (with `Genre` and the `ReleaseStatus` enum), the `MovieDetailsRepository` interface (`fun movieDetails(id): Flow<AppResult<MovieDetails>>`, which emits the cached value first, then the network outcome, then completes) and `GetMovieDetailsUseCase` (non-positive IDs fail as `NotFound`). *Test:* use-case unit tests. **Covers:** R6, R16, R27
 - [ ] **T2.2 Data: details plus cache.** Add `/movie/{id}`, the DTO, `MovieDetailsEntity` (genres stored through a converter), the DAO, mappers with validation, and a cache-then-network repository: emit the cached row, fetch, save to the database, and emit again. On failure with a cache, keep the cached data and emit the error as a non-blocking signal. *Test:* MockWebServer tests, repository tests with a fake DAO for both cache-hit and cache-miss paths, and a 404 mapping to `NotFound`. **Covers:** R6, R7, R22, R28, R38
 - [ ] **T2.3 Presentation: DetailsViewModel.** Receive the movie ID from `DetailsRoute` through assisted injection or a key. Add `DetailsUiState` with `status`, `isRefreshing` and `synopsisExpanded`, the actions, and the effects. *Test:* ViewModel tests for loading → content, cached → refreshed, error → retry → content, and toggling the synopsis. **Covers:** R6, R17, R21, R29
 - [ ] **T2.4 UI: Details screen.** Add the backdrop hero, the overlapping poster, the info row, genre chips, `RatingRing`, the expandable synopsis, the four states, and animations A2, A4, A6, A7 and A8. Add previews (light, dark, RTL). *Test:* checked on a device with online, offline-with-cache and offline-without-cache. **Covers:** R6, R32, R33
