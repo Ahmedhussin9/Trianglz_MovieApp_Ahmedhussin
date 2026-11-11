@@ -115,6 +115,13 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.kotlinx.serialization.json)
 
+    // Coroutines: declared directly so the app and its tests share one version (AndroidX alone
+    // resolves an older core, which breaks kotlinx-coroutines-test in instrumented tests).
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Logging (debug builds only plant a tree; release logs nothing)
+    implementation(libs.timber)
+
     // Images
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
@@ -146,6 +153,7 @@ dependencies {
     androidTestImplementation(libs.turbine)
     androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.androidx.paging.testing)
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.compiler)
 

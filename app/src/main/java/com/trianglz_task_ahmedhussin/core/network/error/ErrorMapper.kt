@@ -3,6 +3,7 @@ package com.trianglz_task_ahmedhussin.core.network.error
 import com.trianglz_task_ahmedhussin.core.domain.error.DomainError
 import com.trianglz_task_ahmedhussin.core.domain.error.DomainException
 import retrofit2.HttpException
+import timber.log.Timber
 import java.io.IOException
 import java.io.InterruptedIOException
 
@@ -32,6 +33,15 @@ internal fun Int.toDomainError(): DomainError = when (this) {
     else -> DomainError.Unknown
 }
 
-/** Wraps any throwable as a [DomainException] carrying its mapped error, for Paging load results. */
-fun Throwable.toDomainException(): DomainException =
-    this as? DomainException ?: DomainException(toDomainError(), cause = this)
+/**
+ * Wraps any throwable as a [DomainException] carrying its mapped error, for Paging load results.
+ *
+ * The original exception is logged once here (debug builds); an existing [DomainException]
+ * was already logged when it was created, so it is returned unchanged without a second log.
+ */
+fun Throwable.toDomainException(): DomainException {
+    if (this is DomainException) return this
+    val error = toDomainError()
+    Timber.w(this, "Load failed → %s", error)
+    return DomainException(error, cause = this)
+}

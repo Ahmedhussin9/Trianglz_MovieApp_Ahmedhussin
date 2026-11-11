@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| **Current phase** | Phase 1: Movies list (Phase 0 complete) |
-| **Last completed task** | T0.10: Test infrastructure (T0.7 merged into T1.3) |
-| **Next task** | T1.1: Domain, movies list |
+| **Current phase** | Phase 1: Movies list, all tasks done (Phase 1 PR next) |
+| **Last completed task** | T1.6: UI tests, Movies screen (awaiting the user's check) |
+| **Next task** | Phase 1 PR into `develop`, then T2.1: Domain, details |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -264,24 +264,26 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 - [x] **T0.9 Navigation 3 shell.** Add the `MoviesRoute` and `DetailsRoute(movieId)` keys, a `NavDisplay` with a back stack saved across configuration changes and process death, ViewModel scoping per entry, and placeholder screens. Handle edge-to-edge insets correctly from the start (targetSdk 36 forces edge-to-edge). *Test:* you can go to the placeholder details screen and back, and nothing sits under the system bars. **Covers:** R5, R19
 - [x] **T0.10 Test infrastructure.** Add `MainDispatcherRule`, test dispatchers, a `HiltTestRunner` with `testInstrumentationRunner` set, and a shared `TestData` factory. *Test:* one sample unit test and one sample instrumented Hilt test pass. **Covers:** R27, R28, R29, R30
 
+- [x] **T0.11 Logging** (added during Phase 1 at the user's request, done before T1.3). Timber 5.0.1, planted only in debug builds. HTTP traffic goes through Timber (tag `TmdbHttp`, long bodies chunked, token redacted). Handled failures are logged with their original exception at the two error boundaries (`safeApiCall`, `toDomainException`). The logging convention is in CLAUDE.md. *Test:* unit tests with a recording tree, plus a check on the emulator, online and offline. **Covers:** R21, R36, R37
+
 ### Phase 1: Movies list, built end to end first
 
-- [ ] **T1.1 Domain: movies list.** Add the `Movie` model, the `MoviesRepository` interface (`fun movies(): Flow<PagingData<Movie>>`) and `GetMoviesUseCase`. *Test:* the use-case unit test with a fake repository. **Covers:** R1, R16, R27
-- [ ] **T1.2 Data, remote: discover endpoint.** Add `MoviesApi.discoverMovies(page)` (`/discover/movie?sort_by=popularity.desc`), the DTOs, `MoviesRemoteDataSource`, and DTO → entity → domain mappers **with validation**:
+- [x] **T1.1 Domain: movies list.** Add the `Movie` model, the `MoviesRepository` interface (`fun movies(): Flow<PagingData<Movie>>`) and `GetMoviesUseCase`. *Test:* the use-case unit test with a fake repository. **Covers:** R1, R16, R27
+- [x] **T1.2 Data, remote: discover endpoint.** Add `MoviesApi.discoverMovies(page)` (`/discover/movie?sort_by=popularity.desc`), the DTOs, `MoviesRemoteDataSource`, and DTO → entity → domain mappers **with validation**:
   - drop items with no ID or a blank title;
   - a null poster becomes a placeholder;
   - an invalid date means no year is shown;
   - the rating is limited to 0–10.
 
   *Test:* MockWebServer and mapper unit tests, including malformed data. **Covers:** R1, R2, R22, R23, R28
-- [ ] **T1.3 Data, cache: RemoteMediator.** Includes the merged T0.7: `MovieDatabase`, `DatabaseModule` and an exported schema. Add `MovieEntity` (with a position or order column), `RemoteKeyEntity`, the DAOs, `MoviesRemoteMediator` (`initialize()` → `LAUNCH_INITIAL_REFRESH`, REFRESH replaces the pages in one transaction, APPEND loads the next page and stops at `min(total_pages, 500)` because TMDb reports more pages than it serves (seen in T0.5), errors are wrapped with `toDomainError()`), and `MoviesRepositoryImpl` with a `Pager` backed by Room's `PagingSource`. *Test:*
+- [x] **T1.3 Data, cache: RemoteMediator.** Includes the merged T0.7: `MovieDatabase`, `DatabaseModule` and an exported schema. Add `MovieEntity` (with a position or order column), `RemoteKeyEntity`, the DAOs, `MoviesRemoteMediator` (`initialize()` → `LAUNCH_INITIAL_REFRESH`, REFRESH replaces the pages in one transaction, APPEND loads the next page and stops at `min(total_pages, 500)` because TMDb reports more pages than it serves (seen in T0.5), errors are wrapped with `toDomainError()`), and `MoviesRepositoryImpl` with a `Pager` backed by Room's `PagingSource`. *Test:*
   - `RemoteMediator` unit tests with paging-testing for refresh success and failure, append, and end of pagination;
   - instrumented DAO tests.
 
   **Covers:** R3, R7, R8, R9, R10, R38, R28
-- [ ] **T1.4 Presentation: MoviesViewModel (list part).** Add `MoviesUiState`, `MoviesUiAction`, `MoviesEffect`, `onAction()`, the `movies` flow with `cachedIn(viewModelScope)`, the `MovieClicked` → `NavigateToDetails` effect, and the pure `LoadStates → ListStatus` mapper. *Test:* ViewModel tests with Turbine, plus mapper tests covering all four states and the "cached plus failed refresh" banner case. **Covers:** R17, R15, R21, R29
-- [ ] **T1.5 UI: Movies screen.** Add the adaptive grid, `PosterCard` (title, poster, year and rating pill), the `PagingFooter` (loading, and error with Retry), the full-screen Loading, Empty and Error states, the "Showing saved movies" banner, and animations A1, A2, A4 and A9. Add previews. *Test:* checked on a device in airplane mode with and without cache. **Covers:** R2, R4, R9, R10, R32, R33
-- [ ] **T1.6 UI tests: Movies screen.** Compose tests on the stateless screen with fake `PagingData` covering the Content, Empty and Error states, the footer Retry calling `onAction(Retry)`, and a card click sending `MovieClicked`. **Covers:** R30
+- [x] **T1.4 Presentation: MoviesViewModel (list part).** Add `MoviesUiState`, `MoviesUiAction`, `MoviesEffect`, `onAction()`, the `movies` flow with `cachedIn(viewModelScope)`, the `MovieClicked` → `NavigateToDetails` effect, and the pure `LoadStates → ListStatus` mapper. *Test:* ViewModel tests with Turbine, plus mapper tests covering all four states and the "cached plus failed refresh" banner case. **Covers:** R17, R15, R21, R29
+- [x] **T1.5 UI: Movies screen.** Add the adaptive grid, `PosterCard` (title, poster, year and rating pill), the `PagingFooter` (loading, and error with Retry), the full-screen Loading, Empty and Error states, the "Showing saved movies" banner, and animations A1, A2, A4 and A9. Add previews. *Test:* checked on a device in airplane mode with and without cache. **Covers:** R2, R4, R9, R10, R32, R33
+- [x] **T1.6 UI tests: Movies screen.** Compose tests on the stateless screen with fake `PagingData` covering the Loading, Content, Empty and Error states, the footer error, the cached-data notice and its Dismiss, and a card click sending `MovieClicked`. Retry calls `LazyPagingItems.retry()` directly (T1.5), so it is tested by its effect: a `PagingSource` that fails once loads the movies after Retry. **Covers:** R4, R30
 
 ### Phase 2: Movie details
 
@@ -302,7 +304,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 ### Phase 4: Quality, documentation and delivery
 
 - [ ] **T4.1 Error and validation review.** Go through every `DomainError` on every screen on a device (airplane mode, bad token → 401, slow network) and fix the gaps. Check accessibility basics: content descriptions, touch targets, font scaling. *Test:* a manual checklist in the feature doc. **Covers:** R21, R22, R32, R36, R37
-- [ ] **T4.2 Code and architecture documentation.** Run a KDoc pass on public APIs. Write `docs/ARCHITECTURE.md` (layers, data flow, the cache flow, how the names map to MVI) and `docs/adr/` with records for MVI naming, `PagingData` outside `UiState`, `RemoteMediator` vs a manual cache, the certification-filter limitation on search, single module vs multi-module, and Navigation 3. **Covers:** R34, R35, R40, R46, R18
+- [ ] **T4.2 Code and architecture documentation.** Run a KDoc pass on public APIs. Write `docs/ARCHITECTURE.md` (layers, data flow, the cache flow, how the names map to MVI) and `docs/adr/` with records for MVI naming, `PagingData` outside `UiState`, `RemoteMediator` vs a manual cache, the certification-filter limitation on search, single module vs multi-module, **package by feature vs package by layer** (with the comparison table from T1.2), and Navigation 3. **Covers:** R34, R35, R40, R46, R18
 - [ ] **T4.3 README.** Cover the overview, feature list, tech stack, architecture summary (linking to the docs), the TMDb token setup, how to run the app and the tests, and the known limitations. **Covers:** R44, R45, R40
 - [ ] **T4.4 AI usage document.** Write `docs/AI_USAGE.md`: how AI was used (CLAUDE.md rules, requirement extraction, planning, task-by-task work with human review, and verification on a device), what was checked by hand, and its limits. **Covers:** R39
 - [ ] **T4.5 Release and submission.** Create `release/1.0.0` from `develop`, update the version, merge into `master` and back into `develop`, and tag `v1.0.0`. Push to a **public** GitHub repository and check that no secrets are in the history. Attach a debug APK built with our token to the `v1.0.0` GitHub release, and send the token privately with the submission (Q18). Share the link, and regenerate the token after the review. **Covers:** R31, R42, R43, R47
@@ -331,7 +333,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 | R18 | Package-by-feature structure in every task; T4.2 (ADR); E16 optional |
 | R19 | T0.2, T0.8, T0.9 |
 | R20 | T0.3 (each feature's DI module) |
-| R21 | T0.6, T1.4, T2.3, T4.1 |
+| R21 | T0.6, T0.11, T1.4, T2.3, T4.1 |
 | R22 | T1.2, T2.2, T3.1, T4.1 |
 | R23 | T0.4, T0.5, T1.2, T3.2 |
 | R24 | T0.5, T3.2 |

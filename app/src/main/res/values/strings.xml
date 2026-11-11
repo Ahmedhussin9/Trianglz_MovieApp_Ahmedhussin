@@ -6,9 +6,16 @@
     <string name="action_retry">Retry</string>
     <string name="action_back">Back</string>
 
-    <!-- Navigation-shell stubs (T0.9); removed when the real screens land in T1.5 / T2.4 -->
-    <string name="placeholder_movies_body">The movie list arrives in Phase 1.</string>
-    <string name="placeholder_open_sample_movie">Open a sample movie</string>
+    <string name="action_dismiss">Dismiss</string>
+    <string name="action_scroll_to_top">Scroll to top</string>
+    <string name="loading_more">Loading more movies…</string>
+
+    <!-- Movies list -->
+    <string name="movies_empty_title">No movies to show</string>
+    <string name="movies_empty_message">Please check back later.</string>
+    <string name="movies_cached_notice">Couldn\'t refresh. Showing saved movies.</string>
+
+    <!-- Navigation-shell stub (T0.9); removed when the real Details screen lands in T2.4 -->
     <string name="placeholder_details_title">Movie #%1$d</string>
     <string name="rating_content_description">Rated %1$s out of 10</string>
 
