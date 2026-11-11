@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| **Current phase** | Phase 3: Search (Phases 0–2 complete) |
-| **Last completed task** | T3.4: UI, search bar |
-| **Next task** | T3.5: UI test, search |
+| **Current phase** | Phase 3: Search, all tasks done (Phase 3 PR next) |
+| **Last completed task** | T3.5: UI test, search |
+| **Next task** | Phase 3 PR into `develop`, then T4.1: Error and validation review |
 
 Scope comes from [`requirements.md`](requirements.md). Working rules come from [`CLAUDE.md`](../CLAUDE.md).
 
@@ -305,7 +305,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 - [x] **T3.2 Data: search PagingSource.** Add `MoviesApi.searchMovies(query, page)` (`/search/movie`; the three filter parameters are still sent by the interceptor, see Q2), `SearchPagingSource` with `toDomainError()` mapping, and `MovieSearchRepositoryImpl` (`searchMovies(query)`). The source skips movies it already returned on an earlier page, since repeated IDs would crash the keyed grid. *Test:* `PagingSource` unit tests with MockWebServer for pages, empty results and errors. **Covers:** R12, R23, R24, R28
 - [x] **T3.3 Presentation: search in MoviesViewModel.** Add the `query` `StateFlow` with `debounce(350 ms)` (none when clearing), `distinctUntilChanged` on the validated query, `flatMapLatest` to the use case and `cachedIn`, plus `QueryChanged` and `ClearQuery`. *Test:* virtual-time tests: typing fast makes one request, clearing goes back to the list, and the same query does not trigger a new request. **Covers:** R13, R15, R17, R29
 - [x] **T3.4 UI: search bar.** Add a pinned search bar at the top of the Movies screen, results in the same grid, the "No results for 'x'" empty state, and animations A3 and A5. Hide the keyboard when scrolling or submitting. *Test:* checked on a device by typing, clearing, no results, scrolling (keyboard hides) and going offline; the Movies screen and navigation UI tests still pass. **Covers:** R11, R12, R13, R32, R33
-- [ ] **T3.5 UI test: search.** A Compose test: typing sends `QueryChanged`, results are shown, the empty state is shown for no matches, and the clear button resets the screen. **Covers:** R13, R30
+- [x] **T3.5 UI test: search.** A Compose test: typing sends `QueryChanged`, the clear button shows only with text and sends `ClearQuery`, results replace the popular list while searching, the empty state shows the query for no matches, Retry after a search error reloads, and tapping a result sends `MovieClicked`. **Covers:** R13, R30
 
 ### Phase 4: Quality, documentation and delivery
 
