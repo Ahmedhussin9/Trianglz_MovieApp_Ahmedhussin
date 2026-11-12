@@ -12,11 +12,15 @@ import com.trianglz_task_ahmedhussin.feature.movies.domain.model.Movie
 import com.trianglz_task_ahmedhussin.testing.FakeMoviesApi
 import com.trianglz_task_ahmedhussin.testing.inMemoryDatabase
 import com.trianglz_task_ahmedhussin.testing.movieEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -74,14 +78,32 @@ class MoviesRepositoryImplTest {
         assertEquals(DomainError.NoInternet, error.error)
     }
 
+    /**
+     * After a successful refresh Room invalidates its PagingSource on a background thread, so the
+     * fresh rows reach the UI a moment after the mediator reports success. `asSnapshot()` could
+     * return in that gap with the cached row on a busy device; this waits (in real time, bounded)
+     * for the fresh rows, exactly as a collecting UI would receive them.
+     */
     @Test
     fun onlineLaunchWithACacheEndsWithTheFreshMovies() = runTest {
         database.movieDao().insertAll(listOf(movieEntity(id = 10, position = 0)))
         api.respond(page = 1, movieIds = listOf(1, 2), totalPages = 1)
+        val presenter = object : PagingDataPresenter<Movie>() {
+            override suspend fun presentPagingDataEvent(event: PagingDataEvent<Movie>) = Unit
+        }
 
-        val movies = repository.popularMovies().asSnapshot()
+        backgroundScope.launch { repository.popularMovies().collectLatest { presenter.collectFrom(it) } }
+        withContext(Dispatchers.Default) {
+            withTimeout(FRESH_DATA_TIMEOUT_MS) {
+                while (presenter.snapshot().items.map { it.id } != listOf(1, 2)) delay(POLL_INTERVAL_MS)
+            }
+        }
 
-        assertEquals(listOf(1, 2), movies.map { it.id })
-        assertEquals("Movie 1", movies.first().title)
+        assertEquals("Movie 1", presenter.snapshot().items.first().title)
+    }
+
+    private companion object {
+        const val FRESH_DATA_TIMEOUT_MS = 5_000L
+        const val POLL_INTERVAL_MS = 20L
     }
 }

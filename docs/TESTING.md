@@ -136,6 +136,7 @@ gradlew.bat connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArgumen
 | `DetailsScreenTest` (T2.4) | When the screen opened with the synopsis already expanded (after rotation), "Show less" never appeared | Measure "longer than four lines" in both states |
 | `MovieDetailsRepositoryImplTest` (T2.2) | A test design error: the second collection emits the cached copy too | The test collects whole runs with `toList()` |
 | `SearchScreenTest` compilation (T3.5) | Two private helper classes with the same name in one package clashed | Shared `PagingTestUtils.kt` |
+| The release test run (T4.5), on a heavily loaded emulator | `MoviesRepositoryImplTest` was flaky: `asSnapshot()` could return between the mediator's success and Room's background invalidation, so it saw the cached row | The test now waits, in real time with a timeout, for the fresh rows, as a collecting UI does. The app was never affected |
 | `StatusLayoutTest` (T4.1, written after the bug was seen on a device) | Error states could not scroll, so Retry was unreachable with large text in landscape | Scrollable, still-centred layout |
 
 ## 7. What is not automated, and why
