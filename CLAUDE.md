@@ -1,6 +1,6 @@
 # Movie App
 
-Android assessment task: a movie app. Deadline: [fill in date]
+Android assessment task: a movie app. Deadline: one week from receiving the task.
 
 The full requirements live in `docs/requirements.md` (extracted from the task PDF). That file is the source of truth for scope. If anything in this file conflicts with it, the requirements win, and you tell me about the conflict.
 

@@ -84,6 +84,14 @@ minSdk 26, targetSdk 36, compileSdk 37.
 
 ## Getting started
 
+### Try it without building: the review APK
+A ready-to-install debug APK (`MovieApp-v1.0.1.apk`, Android 8.0+) is **sent to the reviewers privately, with the submission email**. It is deliberately **not** published in this repository or in its GitHub releases:
+- the APK contains a TMDb access token so it works out of the box, and anything inside an APK can be extracted;
+- the token is a read-only key for public movie data with no personal information, and it will be **regenerated after the review**, but publishing credentials, even low-risk ones, is not good practice.
+
+To run the app from source instead, follow the steps below with your own free TMDb token.
+
+
 ### Requirements
 - Android Studio with support for AGP 9.2.1
 - JDK 17 or newer (Android Studio's bundled JDK works)
