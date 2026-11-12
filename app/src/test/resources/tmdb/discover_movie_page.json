@@ -1,0 +1,79 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/3Rfvhy1Nl6sSGJwyjb0QiZzZYlB.jpg",
+      "genre_ids": [16, 12, 10751, 35],
+      "id": 862,
+      "original_language": "en",
+      "original_title": "Toy Story",
+      "overview": "Led by Woody, Andy's toys live happily in his room until Andy's birthday brings Buzz Lightyear onto the scene.",
+      "popularity": 102.53,
+      "poster_path": "/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg",
+      "release_date": "1995-10-30",
+      "title": "Toy Story",
+      "video": false,
+      "vote_average": 7.97,
+      "vote_count": 18900
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [18],
+      "id": 1000001,
+      "original_language": "fr",
+      "original_title": "Un film sans affiche",
+      "overview": "",
+      "popularity": 85.1,
+      "poster_path": null,
+      "release_date": "",
+      "title": "  A Film Without a Poster  ",
+      "video": false,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [],
+      "id": 1000002,
+      "original_language": "en",
+      "original_title": "",
+      "overview": "Broken entry with a blank title.",
+      "popularity": 60.0,
+      "poster_path": "/blank.jpg",
+      "release_date": "2024-05-01",
+      "title": "   ",
+      "video": false,
+      "vote_average": 6.1,
+      "vote_count": 3
+    },
+    {
+      "adult": false,
+      "original_title": "No Id",
+      "poster_path": "/noid.jpg",
+      "release_date": "2023-01-01",
+      "title": "Entry Without an Id",
+      "vote_average": 5.0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/ysEm3eJdZgA2jR0iDwUyGq7kFqA.jpg",
+      "genre_ids": [16, 10751, 12, 35],
+      "id": 863,
+      "original_language": "en",
+      "original_title": "Toy Story 2",
+      "overview": "Andy heads off to Cowboy Camp, leaving his toys to their own devices.",
+      "popularity": 48.9,
+      "poster_path": "/yFWQkz2ynjwsazT6xQiIXEUsyuh.jpg",
+      "release_date": "1999-10-30",
+      "title": "Toy Story 2",
+      "video": false,
+      "vote_average": 7.6,
+      "vote_count": 14000
+    }
+  ],
+  "total_pages": 1001,
+  "total_results": 20020
+}
