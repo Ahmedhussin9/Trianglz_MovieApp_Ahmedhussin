@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Current phase** | Released: `v1.0.0` (all phases complete) |
+| **Current phase** | Released: `v1.0.1` (all phases complete) |
 | **Last completed task** | T4.5: Release and submission |
 | **Next task** | None required. Optional extras are listed in §8; open item: Arabic digit style on a physical Android 13+ phone (T4.1) |
 
@@ -313,7 +313,7 @@ Each task is done on a `feature/<task-id>-<slug>` branch off `develop` (R31).
 - [x] **T4.2 Code and architecture documentation.** Run a KDoc pass on public APIs. Write `docs/ARCHITECTURE.md` (layers, data flow, the cache flow, how the names map to MVI) and `docs/adr/` with records for MVI naming, `PagingData` outside `UiState`, `RemoteMediator` vs a manual cache, the certification-filter limitation on search, single module vs multi-module, **package by feature vs package by layer** (with the comparison table from T1.2), and Navigation 3. **Covers:** R34, R35, R40, R46, R18 *Result:* `docs/ARCHITECTURE.md`, eight records in `docs/adr/` (the seven planned plus 0008, typed domain errors), and KDoc on the 27 public declarations that lacked it. Added afterwards at the user's request: `docs/WALKTHROUGHS.md`, `docs/TESTING.md` and `docs/FAQ.md`.
 - [x] **T4.3 README.** Cover the overview, feature list, tech stack, architecture summary (linking to the docs), the TMDb token setup, how to run the app and the tests, and the known limitations. **Covers:** R44, R45, R40 A six-image screenshot gallery (extra E9, approved by the user) is included, from screenshots taken during the device checks.
 - [x] **T4.4 AI usage document.** Write `docs/AI_USAGE.md`: how AI was used (CLAUDE.md rules, requirement extraction, planning, task-by-task work with human review, and verification on a device), what was checked by hand, and its limits. **Covers:** R39
-- [x] **T4.5 Release and submission.** Create `release/1.0.0` from `develop`, update the version, merge into `master` and back into `develop`, and tag `v1.0.0`. Push to a **public** GitHub repository and check that no secrets are in the history. Attach a debug APK built with our token to the `v1.0.0` GitHub release, and send the token privately with the submission (Q18). Share the link, and regenerate the token after the review. **Covers:** R31, R42, R43, R47 *Result:* `v1.0.0` released from `release/1.0.0` (history scanned: no secrets); the GitHub release carries the debug APK and release notes. The token is sent to reviewers privately and regenerated after the review (owner's action).
+- [x] **T4.5 Release and submission.** Create `release/1.0.0` from `develop`, update the version, merge into `master` and back into `develop`, and tag `v1.0.0`. Push to a **public** GitHub repository and check that no secrets are in the history. Attach a debug APK built with our token to the `v1.0.0` GitHub release, and send the token privately with the submission (Q18). Share the link, and regenerate the token after the review. **Covers:** R31, R42, R43, R47 *Result:* `v1.0.0` released from `release/1.0.0` (history scanned: no secrets); `v1.0.1` (documentation hotfix) corrected the APK distribution: the debug APK is sent to reviewers privately with the submission email, not attached to the public release. The token is sent to reviewers privately and regenerated after the review (owner's action).
 
 ## 7. Coverage table
 
