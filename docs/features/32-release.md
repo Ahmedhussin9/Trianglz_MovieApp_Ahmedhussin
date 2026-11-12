@@ -5,7 +5,8 @@ Version **1.0.0**, released through Git Flow (R31, R42, R43, R47):
 - **Phase 4 PR.** `feature/phase-4-quality` was merged into `develop` through PR #5, like every earlier phase.
 - **Release branch.** `release/1.0.0` was created from `develop`. It changes `versionName` from "1.0" to "1.0.0" (`versionCode` stays 1 for the first release) and finalizes PLAN.md and this document.
 - **Release.** The branch was merged into `master` with a merge commit, `master` was tagged `v1.0.0`, and the branch was merged back into `develop`. All of them were pushed.
-- **GitHub release `v1.0.0`.** It has release notes and the **debug APK** (`MovieApp-v1.0.0.apk`), built with the owner's TMDb token, so reviewers can install the app without creating a TMDb account (requirements Q18).
+- **GitHub release.** It has release notes and build-from-source instructions, and **no APK**. The debug APK, built with the owner's TMDb token so reviewers can install the app without a TMDb account, is **sent privately with the submission email** (requirements Q18, as changed below).
+- **`v1.0.1` documentation hotfix.** It corrects the docs that described the APK as attached to the public release, and adds a clearly labelled README section explaining how the APK is shared and why. The app code is unchanged from `v1.0.0`; the version is 1.0.1 (code 2) so the shared APK matches the latest tag.
 - **Public repository.** The repository is public, with the complete source code and documentation.
 
 ## 2. Files created or changed
@@ -25,7 +26,7 @@ feature/phase-4-quality ──PR #5──▶ develop ──▶ release/1.0.0 (ve
 ```
 
 ## 4. Decisions made, and alternatives considered
-- **A debug APK with the token, plus the token sent privately (Q18).** Reviewers can run the app immediately, either by installing the APK or by building with the token. The token is extractable from the APK, which is acceptable for TMDb's read-only token because it is **regenerated after the review**. A production app would keep the token on a backend.
+- **The APK is shared privately, not published.** The original plan (Q18) was to attach the APK to the public GitHub release. When the release was created, Claude Code's credential safeguard stopped the upload, because the APK embeds the token. The owner judged that this read-only movie token would be low-risk even if exposed, but that publishing credentials should not be normalised. So the APK goes to the reviewers privately with the submission email, the README explains this, and the token is still **regenerated after the review**. A production app would keep the token on a backend.
 - **Debug, not a minified release build.** R8 is disabled (a known limitation), and a debug build is what was tested on devices throughout.
 - **History scanned before publishing.** Before anything was pushed to `master`, all 31 commits on every branch were searched for JWT-like strings and filled-in `TMDB_ACCESS_TOKEN=` lines. None were found, and `local.properties` was never committed and is git-ignored.
 - **The GitHub CLI** was installed and authenticated as the repository owner, so the PR, the merge and the release were done from the same session as the code.

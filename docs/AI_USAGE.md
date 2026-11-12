@@ -81,6 +81,7 @@ The developer did not only review the output; several of the project's decisions
 
 - **The TMDb token** lives only in the git-ignored `local.properties`. It never appeared in prompts, logs or commits.
 - **The wrong-token test (T4.1):** the file was backed up, the token was swapped for an invalid value without printing either, and the original was restored and verified byte for byte, then the backup was deleted.
+- **Publishing the review APK was stopped by Claude Code's credential safeguard,** because the APK embeds the token and the repository is public. The developer decided to share the APK privately with the submission instead, and documented why in the README.
 - **No personal data** was sent to external services. The developer's email and details were not used anywhere outside git authorship.
 
 ## 8. Limits and responsibility
