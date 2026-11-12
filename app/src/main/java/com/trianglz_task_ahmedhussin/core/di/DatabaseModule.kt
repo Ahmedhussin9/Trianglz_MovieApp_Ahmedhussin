@@ -13,6 +13,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/** Provides the single Room database and every feature's DAOs from it. */
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {

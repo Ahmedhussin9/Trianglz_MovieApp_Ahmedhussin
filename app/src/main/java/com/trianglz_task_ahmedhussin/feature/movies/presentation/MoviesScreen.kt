@@ -6,10 +6,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fitInside
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +44,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.WindowInsetsRulers
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -133,6 +141,7 @@ fun MoviesScreen(
     val gridState = if (state.isSearching) searchGridState else listGridState
     val status = items.loadState.toListStatus(items.itemCount)
     val scope = rememberCoroutineScope()
+    val layoutDirection = LocalLayoutDirection.current
     // derivedStateOf: recomposes only when the threshold is crossed, not on every scrolled pixel.
     val isDeepInList by remember(gridState) { derivedStateOf { gridState.firstVisibleItemIndex > SCROLL_TO_TOP_THRESHOLD } }
 
@@ -165,7 +174,10 @@ fun MoviesScreen(
                     query = state.query,
                     onQueryChange = { onAction(MoviesUiAction.QueryChanged(it)) },
                     onClear = { onAction(MoviesUiAction.ClearQuery) },
-                    modifier = Modifier.padding(start = Spacing.lg, end = Spacing.lg, bottom = Spacing.sm),
+                    modifier = Modifier
+                        // In landscape the navigation bar or a display cutout sits at the side.
+                        .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+                        .padding(start = Spacing.lg, end = Spacing.lg, bottom = Spacing.sm),
                 )
             }
         },
@@ -199,7 +211,12 @@ fun MoviesScreen(
             label = "moviesContent",
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding())
+                // Side insets too: in landscape the navigation bar is at the start or end edge.
+                .padding(
+                    start = innerPadding.calculateStartPadding(layoutDirection),
+                    top = innerPadding.calculateTopPadding(),
+                    end = innerPadding.calculateEndPadding(layoutDirection),
+                )
                 // Results stay above the keyboard while typing (edge-to-edge skill: IME insets).
                 .fitInside(WindowInsetsRulers.Ime.current),
         ) { target ->

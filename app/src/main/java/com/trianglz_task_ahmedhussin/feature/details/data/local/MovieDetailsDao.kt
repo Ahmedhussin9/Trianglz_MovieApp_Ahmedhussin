@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 
+/** Cached details, one row per movie (R7, requirements Q5). */
 @Dao
 interface MovieDetailsDao {
 

@@ -18,6 +18,7 @@ data class MovieUi(
     val ratingText: String?,
 )
 
+/** Formats [Movie] for a card in [locale]: the year in the locale's digits, the rating with one decimal. */
 fun Movie.toUi(locale: Locale = Locale.getDefault()) = MovieUi(
     id = id,
     title = title,

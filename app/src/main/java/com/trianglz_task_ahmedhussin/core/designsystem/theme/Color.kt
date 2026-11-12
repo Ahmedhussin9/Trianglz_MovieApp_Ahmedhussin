@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
  */
 val OnPosterScrim = Color(0xFFFFFFFF)
 
+/** Light scheme: amber primary, teal tertiary, cool slate surfaces (design direction in PLAN.md §5). */
 internal val LightColors: ColorScheme = lightColorScheme(
     primary = Color(0xFF855300),
     onPrimary = Color(0xFFFFFFFF),
@@ -56,6 +57,7 @@ internal val LightColors: ColorScheme = lightColorScheme(
     surfaceContainerHighest = Color(0xFFE0E2E6),
 )
 
+/** Dark scheme: the same roles with near-black slate surfaces and a softened amber. */
 internal val DarkColors: ColorScheme = darkColorScheme(
     primary = Color(0xFFFFB95C),
     onPrimary = Color(0xFF462A00),
